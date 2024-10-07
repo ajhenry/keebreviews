@@ -1,5 +1,6 @@
 "use client";
 
+import { Editor } from "@/components/editor";
 import { SwitchSearch } from "@/components/switch-search";
 import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { Button } from "@/components/ui/button";
@@ -82,20 +83,15 @@ export default function NewReview() {
                   <span>Great</span>
                 </h2>
               </div>
+              <div>
+                <Editor />
+              </div>
             </FormItem>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="w-full">
+              Submit
+            </Button>
           </form>
         </Form>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          Hello
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
       </div>
     </div>
   );

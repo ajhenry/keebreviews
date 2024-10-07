@@ -22,8 +22,8 @@ import { z } from "zod";
 
 const formSchema = z.object({
   travel: z.number().min(0).max(100),
-  feel: z.number().min(0).max(100),
   weight: z.number().min(0).max(100),
+  feel: z.number().min(0).max(100),
   sound: z.number().min(0).max(100),
   typing: z.number().min(0).max(100),
   gaming: z.number().min(0).max(100),
@@ -36,7 +36,12 @@ export default function NewReview() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      travel: 50,
+      weight: 50,
       feel: 50,
+      sound: 50,
+      typing: 50,
+      gaming: 50,
     },
   });
 
@@ -59,32 +64,25 @@ export default function NewReview() {
       <div className="w-full">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <Slider />
-            <FormField
-              control={form.control}
-              name="smoothness"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Smoothness</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center py-4">
-                      <Input
-                        placeholder="50"
-                        className="max-w-28 pr-14 text-xl font-semibold"
-                        {...field}
-                      />
-                      <span className="flex flex-row transform -translate-x-full pr-2 text-xl font-semibold">
-                        <span className="mx-1">/</span>100
-                      </span>
-                    </div>
-                  </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormItem>
+              <FormLabel>Feel</FormLabel>
+              <FormDescription>
+                How does the switch feel? Too Scratchy, smooth, wobbly?
+              </FormDescription>
+              <div>
+                <Slider
+                  defaultValue={[form.getValues("feel")]}
+                  onValueChange={(val) => form.setValue("feel", val[0])}
+                  max={100}
+                  min={0}
+                  step={5}
+                />
+                <h2 className="text-sm flex justify-between mt-1">
+                  <span>Bad</span>
+                  <span>Great</span>
+                </h2>
+              </div>
+            </FormItem>
             <Button type="submit">Submit</Button>
           </form>
         </Form>

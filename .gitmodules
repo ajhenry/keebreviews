@@ -1,0 +1,3 @@
+[submodule "switchdb"]
+	path = switchdb
+	url = https://github.com/ajhenry/switchdb.git

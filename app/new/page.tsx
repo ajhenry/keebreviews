@@ -1,6 +1,8 @@
 "use client";
 
+import { SwitchSearch } from "@/components/switch-search";
 import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,28 +12,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createClient } from "@/utils/supabase/server";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { search } from "@/switchdb/src";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
-  smoothness: z.number().min(0).max(100),
-  weighting: z.number().min(0).max(100),
+  travel: z.number().min(0).max(100),
+  feel: z.number().min(0).max(100),
+  weight: z.number().min(0).max(100),
   sound: z.number().min(0).max(100),
-  typingPerformance: z.number().min(0).max(100),
-  gamingPerformance: z.number().min(0).max(100),
+  typing: z.number().min(0).max(100),
+  gaming: z.number().min(0).max(100),
 });
+
+// import the switches from the switches file to search from
+console.log(search("hello"));
 
 export default function NewReview() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      smoothness: 50,
+      feel: 50,
     },
   });
 
@@ -49,8 +54,12 @@ export default function NewReview() {
         </div>
       </div>
       <div className="w-full">
+        <SwitchSearch />
+      </div>
+      <div className="w-full">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <Slider />
             <FormField
               control={form.control}
               name="smoothness"

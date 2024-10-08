@@ -27,7 +27,6 @@ const formSchema = z.object({
   feel: z.number().min(0).max(100),
   sound: z.number().min(0).max(100),
   typing: z.number().min(0).max(100),
-  gaming: z.number().min(0).max(100),
 });
 
 // import the switches from the switches file to search from
@@ -42,13 +41,23 @@ export default function NewReview() {
       feel: 50,
       sound: 50,
       typing: 50,
-      gaming: 50,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
   };
+
+  const normalizedScore = (score: number) => {
+    return (100 - Math.abs(50 - score) * 2) / 5;
+  };
+
+  const score =
+    normalizedScore(form.watch("travel")) +
+    normalizedScore(form.watch("weight")) +
+    normalizedScore(form.watch("feel")) +
+    normalizedScore(form.watch("sound")) +
+    normalizedScore(form.watch("typing"));
 
   const RatingSlider = ({
     form,
@@ -72,7 +81,9 @@ export default function NewReview() {
         <div>
           <Slider
             defaultValue={[form.getValues(name)]}
-            onValueChange={(val) => form.setValue(name, val[0])}
+            onValueCommit={(val) => {
+              form.setValue(name, val[0]);
+            }}
             max={100}
             min={0}
             step={5}
@@ -82,17 +93,18 @@ export default function NewReview() {
             <span>{high}</span>
           </h2>
         </div>
-        <div>
-          <Editor />
-        </div>
       </FormItem>
     );
   };
 
   return (
     <div className="flex-1 w-full flex flex-col space-y-8">
+      <h1 className="text-2xl font-semibold text-center">New Review</h1>
       <div className="w-full">
         <SwitchSearch />
+      </div>
+      <div>
+        <h2>{score}</h2>
       </div>
       <div className="w-full">
         <Form {...form}>
@@ -124,8 +136,8 @@ export default function NewReview() {
             <RatingSlider
               form={form}
               name="typing"
-              low="Bad"
-              high="Great"
+              low="Better for Gaming"
+              high="Better for Typing"
               label="Typing"
               description="How does the switch feel for typing?"
             />

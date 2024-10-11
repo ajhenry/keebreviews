@@ -5,8 +5,8 @@ import TaskList from "@tiptap/extension-task-list";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
-import MenuBar from "./menu-bar";
 import Placeholder from "@tiptap/extension-placeholder";
+import MenuBar from "./menu-bar";
 
 export function Editor() {
   const editor = useEditor({
@@ -19,13 +19,13 @@ export function Editor() {
         limit: 10000,
       }),
       Placeholder.configure({
-        placeholder: "Write something",
+        placeholder: "Write any notes about the switch here",
       }),
     ],
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none min-h-20",
+          "prose dark:prose-invert prose-sm sm:prose lg:prose-md m-5 focus:outline-none min-h-32",
       },
     },
     immediatelyRender: false,
@@ -34,7 +34,10 @@ export function Editor() {
   return (
     <div className="editor border rounded-md">
       {editor && <MenuBar editor={editor} />}
-      <EditorContent editor={editor} placeholder="Hello there" />
+      <EditorContent
+        editor={editor}
+        placeholder="Write any notes about the switch here"
+      />
     </div>
   );
 }

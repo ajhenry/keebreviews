@@ -21,20 +21,26 @@ import { cn } from "@/lib/utils";
 import { MechanicalKeySwitch, fetchById, getAllSwitches } from "@/switchdb/src";
 
 const toLabel = (sw: MechanicalKeySwitch) => {
+  let baseLabel = `${sw.brand.name} ${sw.spec.model}`;
+
   if (sw.spec.variation && sw.spec.variation !== "undefined") {
-    return {
-      label: `${sw.brand.name} ${sw.spec.model} ${sw.spec.variation}`,
-      value: sw.id,
-    };
+    baseLabel = `${baseLabel} ${sw.spec.variation}`;
+  }
+
+  if (sw.spec.profile === "low") {
+    baseLabel = `${baseLabel} (Low Profile)`;
   }
 
   return {
-    label: `${sw.brand.name} ${sw.spec.model}`,
+    label: baseLabel,
     value: sw.id,
   };
 };
 
-const keyboardSwitches = getAllSwitches().map(toLabel);
+const keyboardSwitches = getAllSwitches().map((item) => {
+  console.log(item.id);
+  return toLabel(item);
+});
 console.log(keyboardSwitches);
 
 export function SwitchSearch() {
@@ -59,10 +65,10 @@ export function SwitchSearch() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
+      <PopoverContent className="relative w-full p-0">
         <Command className="w-full">
           <CommandInput className="w-full" placeholder="Search switches..." />
-          <CommandList className="w-full">
+          <CommandList className="relative w-full">
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {keyboardSwitches.map((framework) => (
@@ -73,6 +79,7 @@ export function SwitchSearch() {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
+                  className="w-full"
                 >
                   <Check
                     className={cn(

@@ -17,33 +17,22 @@ import {
   RiSeparator,
   RiStrikethrough,
   RiTextWrap,
-  RiUnderline,
 } from "@remixicon/react";
-import { useEditor, type Editor } from "@tiptap/react";
+import { type Editor } from "@tiptap/react";
 
-import { Fragment, ReactElement, ReactNode, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
-import remixiconUrl from "remixicon/fonts/remixicon.symbol.svg";
-import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 function MenuItem({
   Icon,
@@ -59,7 +48,10 @@ function MenuItem({
   return (
     <Button
       className="p-1 m-0 h-8"
-      onClick={action}
+      onClick={(e) => {
+        e.preventDefault();
+        action?.();
+      }}
       title={title}
       variant={isActive && isActive() ? "default" : "ghost"}
     >
@@ -235,7 +227,11 @@ export default function MenuBar({ editor }: { editor: Editor }) {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[200px] justify-between mr-2"
+            className="w-full sm:w-[200px] justify-between mr-2"
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen(!open);
+            }}
           >
             {value
               ? textModifiers.find((modifier) => modifier.title === value)

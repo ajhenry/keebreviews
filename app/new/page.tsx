@@ -2,22 +2,15 @@
 
 import { Editor } from "@/components/editor";
 import { SwitchSearch } from "@/components/switch-search";
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormControl,
   FormDescription,
-  FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { search } from "@/switchdb/src";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -29,8 +22,52 @@ const formSchema = z.object({
   typing: z.number().min(0).max(100),
 });
 
-// import the switches from the switches file to search from
-console.log(search("hello"));
+const normalizedScore = (score: number) => {
+  return (100 - Math.abs(50 - score) * 2) / 5;
+};
+
+const RatingSlider = ({
+  form,
+  name,
+  low,
+  middle,
+  high,
+  label,
+  description,
+}: {
+  form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
+  name: keyof z.infer<typeof formSchema>;
+  low: string;
+  middle: string;
+  high: string;
+  label: string;
+  description: string;
+}) => {
+  return (
+    <FormItem>
+      <FormLabel>{label}</FormLabel>
+      <FormDescription>{description}</FormDescription>
+      <div>
+        <Slider
+          defaultValue={[form.getValues(name)]}
+          onValueChange={(val) => {
+            form.setValue(name, val[0]);
+          }}
+          max={100}
+          min={0}
+          step={5}
+        />
+        <h2 className="text-sm flex justify-between mt-1">
+          <span>{low}</span>
+          <span className="absolute left-1/2 transform -translate-x-1/2">
+            {middle}
+          </span>
+          <span>{high}</span>
+        </h2>
+      </div>
+    </FormItem>
+  );
+};
 
 export default function NewReview() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,12 +81,8 @@ export default function NewReview() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
-  };
-
-  const normalizedScore = (score: number) => {
-    return (100 - Math.abs(50 - score) * 2) / 5;
+  const onSubmit = async (data: z.infer<typeof formSchema>, event: any) => {
+    console.log(data, event);
   };
 
   const score =
@@ -59,52 +92,15 @@ export default function NewReview() {
     normalizedScore(form.watch("sound")) +
     normalizedScore(form.watch("typing"));
 
-  const RatingSlider = ({
-    form,
-    name,
-    low,
-    high,
-    label,
-    description,
-  }: {
-    form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
-    name: keyof z.infer<typeof formSchema>;
-    low: string;
-    high: string;
-    label: string;
-    description: string;
-  }) => {
-    return (
-      <FormItem>
-        <FormLabel>{label}</FormLabel>
-        <FormDescription>{description}</FormDescription>
-        <div>
-          <Slider
-            defaultValue={[form.getValues(name)]}
-            onValueCommit={(val) => {
-              form.setValue(name, val[0]);
-            }}
-            max={100}
-            min={0}
-            step={5}
-          />
-          <h2 className="text-sm flex justify-between mt-1">
-            <span>{low}</span>
-            <span>{high}</span>
-          </h2>
-        </div>
-      </FormItem>
-    );
-  };
-
   return (
     <div className="flex-1 w-full flex flex-col space-y-8">
       <h1 className="text-2xl font-semibold text-center">New Review</h1>
       <div className="w-full">
         <SwitchSearch />
       </div>
-      <div>
-        <h2>{score}</h2>
+      <div className="text-center">
+        <h2 className="font-black text-6xl">{score}</h2>
+        <h2 className="text-xl">Score</h2>
       </div>
       <div className="w-full">
         <Form {...form}>
@@ -113,6 +109,7 @@ export default function NewReview() {
               form={form}
               name="travel"
               low="Too Short"
+              middle="Perfect Travel"
               high="Too Long"
               label="Travel"
               description="How far does the switch travel?"
@@ -121,6 +118,7 @@ export default function NewReview() {
               form={form}
               name="weight"
               low="Too Light"
+              middle="Perfect Weight"
               high="Too Heavy"
               label="Weight"
               description="How heavy is the switch?"
@@ -129,6 +127,7 @@ export default function NewReview() {
               form={form}
               name="sound"
               low="Too Quiet"
+              middle="Perfect Sound"
               high="Too Loud"
               label="Sound"
               description="How loud is the switch?"
@@ -137,34 +136,25 @@ export default function NewReview() {
               form={form}
               name="typing"
               low="Better for Gaming"
+              middle="Perfect for Both"
               high="Better for Typing"
               label="Typing"
               description="How does the switch feel for typing?"
             />
-            <FormItem>
-              <FormLabel>Feel</FormLabel>
-              <FormDescription>
-                How does the switch feel? Too Scratchy, smooth, wobbly?
-              </FormDescription>
-              <div>
-                <Slider
-                  defaultValue={[form.getValues("feel")]}
-                  onValueChange={(val) => form.setValue("feel", val[0])}
-                  max={100}
-                  min={0}
-                  step={5}
-                />
-                <h2 className="text-sm flex justify-between mt-1">
-                  <span>Bad</span>
-                  <span>Great</span>
-                </h2>
-              </div>
-              <div>
-                <Editor />
-              </div>
-            </FormItem>
-            <Button type="submit" className="w-full">
-              Submit
+            <RatingSlider
+              form={form}
+              name="feel"
+              low="Too Scratchy"
+              middle="Perfect Feel"
+              high="Too Loose"
+              label="Feel"
+              description="How does the overall switch feel?"
+            />
+            <div className="mt-8">
+              <Editor />
+            </div>
+            <Button type="submit" name="submit" className="w-full">
+              Submit Review
             </Button>
           </form>
         </Form>

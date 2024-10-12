@@ -23,10 +23,21 @@ import {
   getAllSwitches,
   getSwitchById,
 } from "@/switchdb/src";
+import Link from "next/link";
 
 const toLabel = (sw: MechanicalKeySwitch) => {
+  let baseLabel = `${sw.brand.name} ${sw.spec.model}`;
+
+  if (sw.spec.variation && sw.spec.variation !== "undefined") {
+    baseLabel = `${baseLabel} ${sw.spec.variation}`;
+  }
+
+  if (sw.spec.profile === "low") {
+    baseLabel = `${baseLabel} (Low Profile)`;
+  }
+
   return {
-    label: sw.friendlyName,
+    label: baseLabel,
     value: sw.id,
   };
 };
@@ -34,12 +45,13 @@ const toLabel = (sw: MechanicalKeySwitch) => {
 const keyboardSwitches = getAllSwitches().map((item) => {
   return toLabel(item);
 });
+
 interface SwitchSearchProps {
   onSelectSwitch?: (id: string) => void;
   placeholder?: string;
 }
 
-export function SwitchSearch({
+export function HeroSwitchSearch({
   onSelectSwitch,
   placeholder,
 }: SwitchSearchProps) {
@@ -75,22 +87,26 @@ export function SwitchSearch({
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {keyboardSwitches.map((framework) => (
-                <CommandItem
+                <Link
+                  href={`/switches/${framework.value}`}
                   key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {framework.label}
-                </CommandItem>
+                  <CommandItem
+                    value={framework.value}
+                    onSelect={(currentValue) => {
+                      setValue(currentValue === value ? "" : currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === framework.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {framework.label}
+                  </CommandItem>
+                </Link>
               ))}
             </CommandGroup>
           </CommandList>

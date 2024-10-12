@@ -2,7 +2,6 @@
 
 import { Editor } from "@/components/editor";
 import { SwitchSearch } from "@/components/switch-search";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormDescription,
@@ -85,8 +84,6 @@ export default function NewReview() {
       typing: 50,
     },
   });
-
-  console.log(selectedSwitch);
 
   const onSubmit = async (data: z.infer<typeof formSchema>, event: any) => {
     console.log(data, event);

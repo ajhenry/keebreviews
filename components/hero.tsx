@@ -1,3 +1,4 @@
+import { HeroSwitchSearch } from "./hero-switch-search";
 import NextLogo from "./next-logo";
 import SupabaseLogo from "./supabase-logo";
 
@@ -21,6 +22,11 @@ export default function Header() {
       <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
         User reviews of all things keyboard switches
       </p>
+      <h2>Search for a Switch</h2>
+      <div className="w-full">
+        <HeroSwitchSearch />
+      </div>
+
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       <div>
         <h2>Recent Reviews</h2>

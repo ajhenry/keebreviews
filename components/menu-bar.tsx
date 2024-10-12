@@ -184,37 +184,30 @@ export default function MenuBar({ editor }: { editor: Editor }) {
 
   useEffect(() => {
     if (editor.isActive("heading", { level: 1 })) {
-      console.log("setting value to Heading 1");
       setValue("Heading 1");
     }
 
     if (editor.isActive("heading", { level: 2 })) {
-      console.log("setting value to Heading 2");
       setValue("Heading 2");
     }
 
     if (editor.isActive("paragraph")) {
-      console.log("setting value to Paragraph");
       setValue("Paragraph");
     }
 
     if (editor.isActive("bulletList")) {
-      console.log("setting value to Bullet List");
       setValue("Bullet List");
     }
 
     if (editor.isActive("orderedList")) {
-      console.log("setting value to Ordered List");
       setValue("Ordered List");
     }
 
     if (editor.isActive("taskList")) {
-      console.log("setting value to Task List");
       setValue("Task List");
     }
 
     if (editor.isActive("codeBlock")) {
-      console.log("setting value to Code Block");
       setValue("Code Block");
     }
   }, []);

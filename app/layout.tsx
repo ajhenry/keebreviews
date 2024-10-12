@@ -1,7 +1,14 @@
 import DeployButton from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
+import { SwitchSearchCommand } from "@/components/switch-search-modal";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { Container } from "@/components/ui/container";
+import {
+  Dialog,
+  DialogContentSlim,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
@@ -43,12 +50,26 @@ export default function RootLayout({
                       <DeployButton />
                     </div>
                   </div>
+                  <div className="flex-1">
+                    <Dialog>
+                      <DialogTrigger>
+                        <div className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                          Search for a switch
+                        </div>
+                      </DialogTrigger>
+                      <DialogContentSlim>
+                        <SwitchSearchCommand />
+                      </DialogContentSlim>
+                    </Dialog>
+                  </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
               </nav>
-              <div className="flex flex-col max-w-5xl p-5">{children}</div>
+              <Container>
+                <div className="w-full py-8">{children}</div>
+              </Container>
 
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 absolute bottom-0">
                 <p>
                   Powered by{" "}
                   <a

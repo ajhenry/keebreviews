@@ -16,7 +16,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { MechanicalKeySwitch, fetchById, getAllSwitches } from "@/switchdb/src";
+import {
+  MechanicalKeySwitch,
+  getAllSwitches,
+  getSwitchById,
+} from "@/switchdb/src";
 
 const toLabel = (sw: MechanicalKeySwitch) => {
   let baseLabel = `${sw.brand.name} ${sw.spec.model}`;
@@ -48,7 +52,7 @@ interface SwitchSearchProps {
 export function SwitchSearch({ onSelectSwitch }: SwitchSearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const selectedSwitch = fetchById(value);
+  const selectedSwitch = getSwitchById(value);
 
   React.useEffect(() => {
     onSelectSwitch(value);

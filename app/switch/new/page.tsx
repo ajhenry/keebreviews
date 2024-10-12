@@ -9,8 +9,11 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -20,6 +23,7 @@ const formSchema = z.object({
   feel: z.number().min(0).max(100),
   sound: z.number().min(0).max(100),
   typing: z.number().min(0).max(100),
+  title: z.string().max(128).optional(),
 });
 
 const normalizedScore = (score: number) => {
@@ -49,7 +53,7 @@ const RatingSlider = ({
       <FormDescription>{description}</FormDescription>
       <div>
         <Slider
-          defaultValue={[form.getValues(name)]}
+          defaultValue={[form.getValues(name) as number]}
           onValueChange={(val) => {
             form.setValue(name, val[0]);
           }}
@@ -70,6 +74,7 @@ const RatingSlider = ({
 };
 
 export default function NewReview() {
+  const [selectedSwitch, setSelectedSwitch] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,6 +85,8 @@ export default function NewReview() {
       typing: 50,
     },
   });
+
+  console.log(selectedSwitch);
 
   const onSubmit = async (data: z.infer<typeof formSchema>, event: any) => {
     console.log(data, event);
@@ -96,10 +103,10 @@ export default function NewReview() {
     <div className="flex-1 w-full flex flex-col space-y-8">
       <h1 className="text-2xl font-semibold text-center">New Review</h1>
       <div className="w-full">
-        <SwitchSearch />
+        <SwitchSearch onSelectSwitch={(id) => setSelectedSwitch(id)} />
       </div>
       <div className="text-center">
-        <h2 className="font-black text-6xl">{score}</h2>
+        <h2 className="font-black text-6xl">{score}/100</h2>
         <h2 className="text-xl">Score</h2>
       </div>
       <div className="w-full">
@@ -150,12 +157,24 @@ export default function NewReview() {
               label="Feel"
               description="How does the overall switch feel?"
             />
+            <div>
+              <FormItem>
+                <FormLabel>Review Title</FormLabel>
+                <Input
+                  placeholder="Great switch but..."
+                  {...form.register("title")}
+                />
+                <FormDescription>
+                  Summarize your review in one sentence
+                </FormDescription>
+              </FormItem>
+            </div>
             <div className="mt-8">
               <Editor />
             </div>
-            <Button type="submit" name="submit" className="w-full">
+            <LoadingButton type="submit" name="submit" className="w-full">
               Submit Review
-            </Button>
+            </LoadingButton>
           </form>
         </Form>
       </div>

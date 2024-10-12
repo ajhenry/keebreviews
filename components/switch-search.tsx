@@ -1,5 +1,3 @@
-"use client";
-
 import { Check, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 
@@ -43,10 +41,18 @@ const keyboardSwitches = getAllSwitches().map((item) => {
 });
 console.log(keyboardSwitches);
 
-export function SwitchSearch() {
+interface SwitchSearchProps {
+  onSelectSwitch: (id: string) => void;
+}
+
+export function SwitchSearch({ onSelectSwitch }: SwitchSearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const selectedSwitch = fetchById(value);
+
+  React.useEffect(() => {
+    onSelectSwitch(value);
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -65,9 +71,9 @@ export function SwitchSearch() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="relative w-full p-0">
-        <Command className="w-full">
-          <CommandInput className="w-full" placeholder="Search switches..." />
+      <PopoverContent className="relative popover-content-width-full p-0">
+        <Command>
+          <CommandInput placeholder="Search switches..." />
           <CommandList className="relative w-full">
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
@@ -79,7 +85,6 @@ export function SwitchSearch() {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
-                  className="w-full"
                 >
                   <Check
                     className={cn(

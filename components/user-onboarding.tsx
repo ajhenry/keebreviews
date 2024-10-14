@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -16,30 +17,33 @@ import { LoadingButton } from "./ui/loading-button";
 import { Input } from "./ui/input";
 import { prismaClient } from "@/lib/database";
 import { createClient } from "@/utils/supabase/client";
-import { useFormState, useFormStatus } from "react-dom";
-import { onboardingAction } from "@/app/actions";
-import { z } from "zod";
+import { useFormState } from "react-dom";
+import { useServerAction } from "zsa-react";
+import { onboardingAction } from "@/app/zsa-actions";
 import { onboardingFormSchema } from "@/app/schemas";
+import { useRouter } from "next/router";
 
 export default function UserOnboarding() {
-  const [state, formAction] = useFormState(onboardingAction, {
-    username: "",
-    errors: {
-      username: undefined,
-    },
-  });
-  const { pending } = useFormStatus();
-
+  const { isPending, execute, data } = useServerAction(onboardingAction);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof onboardingFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(onboardingFormSchema),
     defaultValues: {
-      username: state?.username ?? "",
+      username: "",
+      name: "",
     },
   });
+
+  useEffect(() => {
+    // redirect to the home page after onboarding is complete
+    if (data?.success) {
+      router.replace("/");
+    }
+  }, [data]);
 
   const username = form.watch("username");
 
@@ -50,13 +54,8 @@ export default function UserOnboarding() {
       .select("handle")
       .eq("handle", username);
 
-    console.log(count, error);
-
-    return count === 0 || !count;
+    return (count === 0 || !count) && !error;
   };
-
-  console.log(form.formState.errors);
-  console.log(/^[a-zA-Z0-9_-]*$/.test(username));
 
   // Custom debounce function
   const debouncedCheck = (username: string) => {
@@ -83,21 +82,39 @@ export default function UserOnboarding() {
     };
   }, [username]);
 
-  const onSubmit = (data: z.infer<typeof onboardingFormSchema>) => {
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof onboardingFormSchema>) => {
+    if (!isAvailable) {
+      return;
+    }
+
+    await execute(data);
   };
 
   return (
     <Form {...form}>
-      <form action={formAction} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full name</FormLabel>
+              <FormControl>
+                <Input placeholder="Full Name" {...field} />
+              </FormControl>
+              <FormDescription>Your full name</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select a Username</FormLabel>
+              <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="Username" {...field} />
               </FormControl>
               <FormDescription>
                 {username && isAvailable && !form.formState.errors.username && (
@@ -112,9 +129,9 @@ export default function UserOnboarding() {
           type="submit"
           name="submit"
           className="w-full"
-          loading={pending}
+          loading={isPending}
         >
-          Submit Review
+          Complete Onboarding
         </LoadingButton>
       </form>
     </Form>

@@ -24,8 +24,6 @@ export default async function ProtectedPage() {
     },
   });
 
-  console.log(data);
-
   if (!data) {
     return redirect("/onboarding");
   }

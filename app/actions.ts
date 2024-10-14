@@ -4,33 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { onboardingFormSchema } from "./schemas";
-
-export const onboardingAction = async (
-  prevState: { message: string },
-  formData: FormData
-) => {
-  const username = formData.get("username")?.toString();
-
-  const validatedFields = onboardingFormSchema.safeParse({
-    username,
-  });
-
-  // Return early if the form data is invalid
-  if (!validatedFields.success) {
-    return {
-      username,
-      errors: validatedFields.error.flatten().fieldErrors,
-    };
-  }
-
-  const supabase = createClient();
-
-  console.log("checking for existing user");
-  const user = await supabase.auth.getUser();
-
-  console.log(user);
-};
+import { createServerAction } from "zsa";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();

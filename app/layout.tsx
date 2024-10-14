@@ -14,6 +14,8 @@ import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
+import "react-data-grid/lib/styles.css";
+import { SiteHeader } from "@/components/header";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -42,34 +44,12 @@ export default function RootLayout({
         >
           <main className="min-h-screen flex flex-col items-center">
             <div className="flex-1 w-full flex flex-col items-center">
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>KeebReviews</Link>
-                    <div className="flex items-center gap-2">
-                      <DeployButton />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <Dialog>
-                      <DialogTrigger>
-                        <div className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                          Search for a switch
-                        </div>
-                      </DialogTrigger>
-                      <DialogContentSlim>
-                        <SwitchSearchCommand />
-                      </DialogContentSlim>
-                    </Dialog>
-                  </div>
-                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
-                </div>
-              </nav>
+              <SiteHeader />
               <Container>
                 <div className="w-full py-8">{children}</div>
               </Container>
 
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 absolute bottom-0">
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0">
                 <p>
                   Powered by{" "}
                   <a

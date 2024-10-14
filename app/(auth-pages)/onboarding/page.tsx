@@ -1,4 +1,5 @@
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
+import UserOnboarding from "@/components/user-onboarding";
+import { prismaClient } from "@/lib/database";
 import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -14,6 +15,17 @@ export default async function ProtectedPage() {
     return redirect("/sign-in");
   }
 
+  // see if they completed onboarding
+  const data = await prismaClient.user.findFirst({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (data) {
+    return redirect("/");
+  }
+
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
       <div className="w-full">
@@ -22,16 +34,7 @@ export default async function ProtectedPage() {
           This is a protected page that you can only see as an authenticated
           user
         </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
+        <UserOnboarding />
       </div>
     </div>
   );

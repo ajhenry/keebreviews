@@ -85,8 +85,8 @@ export default function NewReview() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>, event: any) => {
-    console.log(data, event);
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    console.log(data);
   };
 
   const score =

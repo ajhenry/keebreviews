@@ -4,6 +4,7 @@ import { createServerAction } from "zsa";
 import { onboardingFormSchema } from "./schemas";
 import { createClient } from "@/utils/supabase/server";
 import { prismaClient } from "@/lib/database";
+import { redirect } from "next/navigation";
 
 export const onboardingAction = createServerAction()
   .input(onboardingFormSchema)
@@ -38,3 +39,9 @@ export const onboardingAction = createServerAction()
 
     return { success: true };
   });
+
+export const signOutAction = createServerAction().handler(async () => {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  return redirect("/sign-in");
+});

@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -71,6 +72,7 @@ const RatingSlider = ({
 
 export function SwitchReviewForm() {
   const { execute, isPending } = useServerAction(createReviewAction);
+  const router = useRouter();
   const form = useForm<z.infer<typeof reviewFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(reviewFormSchema),
@@ -95,8 +97,11 @@ export function SwitchReviewForm() {
       return;
     }
 
-    const result = await execute(data);
-    console.log(result);
+    const [res] = await execute(data);
+
+    if (res?.success) {
+      router.push(res.redirect);
+    }
   };
 
   const score =

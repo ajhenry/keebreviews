@@ -68,9 +68,19 @@ export const createReviewAction = createServerAction()
         title: input.title,
         content: input.body,
       },
+      select: {
+        author: {
+          select: {
+            handle: true,
+          },
+        },
+      },
     });
 
     console.log(res);
 
-    return { success: true };
+    return {
+      success: true,
+      redirect: `/switches/${input.switchId}/reviews/${res.author?.handle}/`,
+    };
   });

@@ -8,8 +8,15 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import MenuBar from "./menu-bar";
 
-export function Editor() {
+interface EditorProps {
+  onContentChange: (content: string) => void;
+}
+
+export function Editor({ onContentChange }: EditorProps) {
   const editor = useEditor({
+    onUpdate: ({ editor }) => {
+      onContentChange(editor.getHTML());
+    },
     extensions: [
       StarterKit.configure(),
       Highlight,

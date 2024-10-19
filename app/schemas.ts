@@ -20,3 +20,14 @@ export const onboardingFormSchema = z.object({
     .min(1, "Name is required")
     .max(64, "Name must be 64 characters or fewer"),
 });
+
+export const reviewFormSchema = z.object({
+  switchId: z.string(),
+  travel: z.number().min(0).max(100),
+  weight: z.number().min(0).max(100),
+  feel: z.number().min(0).max(100),
+  sound: z.number().min(0).max(100),
+  typing: z.number().min(0).max(100),
+  title: z.string().max(128).optional(),
+  body: z.string().max(5000).optional(),
+});

@@ -1,29 +1,26 @@
 "use client";
 
+import { reviewFormSchema } from "@/app/schemas";
+import { createReviewAction } from "@/app/zsa-actions";
 import { Editor } from "@/components/editor";
 import { SwitchSearch } from "@/components/switch-search";
 import {
   Form,
+  FormControl,
   FormDescription,
+  FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const formSchema = z.object({
-  travel: z.number().min(0).max(100),
-  weight: z.number().min(0).max(100),
-  feel: z.number().min(0).max(100),
-  sound: z.number().min(0).max(100),
-  typing: z.number().min(0).max(100),
-  title: z.string().max(128).optional(),
-});
+import { useServerAction } from "zsa-react";
 
 const normalizedScore = (score: number) => {
   return (100 - Math.abs(50 - score) * 2) / 5;
@@ -38,8 +35,8 @@ const RatingSlider = ({
   label,
   description,
 }: {
-  form: ReturnType<typeof useForm<z.infer<typeof formSchema>>>;
-  name: keyof z.infer<typeof formSchema>;
+  form: ReturnType<typeof useForm<z.infer<typeof reviewFormSchema>>>;
+  name: keyof z.infer<typeof reviewFormSchema>;
   low: string;
   middle: string;
   high: string;
@@ -73,10 +70,12 @@ const RatingSlider = ({
 };
 
 export function SwitchReviewForm() {
-  const [selectedSwitch, setSelectedSwitch] = useState<string>();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { execute, isPending } = useServerAction(createReviewAction);
+  const form = useForm<z.infer<typeof reviewFormSchema>>({
+    mode: "onChange",
+    resolver: zodResolver(reviewFormSchema),
     defaultValues: {
+      switchId: "",
       travel: 50,
       weight: 50,
       feel: 50,
@@ -85,8 +84,19 @@ export function SwitchReviewForm() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
     console.log(data);
+
+    if (data.switchId === "") {
+      form.setError("switchId", {
+        type: "manual",
+        message: "Switch is required",
+      });
+      return;
+    }
+
+    const result = await execute(data);
+    console.log(result);
   };
 
   const score =
@@ -97,18 +107,26 @@ export function SwitchReviewForm() {
     normalizedScore(form.watch("typing"));
 
   return (
-    <div className="flex-1 w-full flex flex-col space-y-8">
-      <h1 className="text-2xl font-semibold text-center">New Review</h1>
-      <div className="w-full">
-        <SwitchSearch onSelectSwitch={(id) => setSelectedSwitch(id)} />
-      </div>
-      <div className="text-center">
-        <h2 className="font-black text-6xl">{score}/100</h2>
-        <h2 className="text-xl">Score</h2>
-      </div>
-      <div className="w-full">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="flex-1 w-full flex flex-col space-y-8">
+          <h1 className="text-2xl font-semibold text-center">New Review</h1>
+          <div className="w-full space-y-1">
+            <SwitchSearch
+              onSelectSwitch={(id) => {
+                form.clearErrors("switchId");
+                form.setValue("switchId", id);
+              }}
+            />
+            <FormDescription className="text-destructive">
+              {form.formState.errors.switchId?.message}
+            </FormDescription>
+          </div>
+          <div className="text-center">
+            <h2 className="font-black text-6xl">{score}/100</h2>
+            <h2 className="text-xl">Score</h2>
+          </div>
+          <div className="w-full space-y-8">
             <RatingSlider
               form={form}
               name="travel"
@@ -155,26 +173,37 @@ export function SwitchReviewForm() {
               description="How does the overall switch feel?"
             />
             <div>
-              <FormItem>
-                <FormLabel>Review Title</FormLabel>
-                <Input
-                  placeholder="Great switch but..."
-                  {...form.register("title")}
-                />
-                <FormDescription>
-                  Summarize your review in one sentence
-                </FormDescription>
-              </FormItem>
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Review Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Great switch but..." {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Summarize your review in one sentence
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="mt-8">
-              <Editor />
+              <Editor onContentChange={(html) => form.setValue("body", html)} />
             </div>
-            <LoadingButton type="submit" name="submit" className="w-full">
+            <LoadingButton
+              type="submit"
+              name="submit"
+              className="w-full"
+              loading={isPending}
+            >
               Submit Review
             </LoadingButton>
-          </form>
-        </Form>
-      </div>
-    </div>
+          </div>
+        </div>
+      </form>
+    </Form>
   );
 }

@@ -4,7 +4,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "gen": "supabase gen types typescript --linked > database.types.ts"
+    "gen": "supabase gen types typescript --linked > database.types.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

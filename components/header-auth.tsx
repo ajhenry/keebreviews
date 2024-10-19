@@ -22,11 +22,20 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ModeToggle } from "./mode-toggle";
+import { prismaClient } from "@/lib/database";
+import PrettyAvatar from "prettyavatars";
 
 export default async function AuthButton() {
   const {
     data: { user },
   } = await createClient().auth.getUser();
+
+  const data = await prismaClient.user.findFirst({
+    where: {
+      id: user?.id,
+    },
+  });
 
   if (!hasEnvVars) {
     return (
@@ -69,14 +78,19 @@ export default async function AuthButton() {
       <DropdownMenuTrigger asChild>
         <button>
           <Avatar className="cursor-pointer h-8 w-8">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+              <PrettyAvatar
+                colors={["#5B756C", "#748B83", "#9A947C"]}
+                name={data?.handle ?? "user"}
+                variant="smile"
+              />
+            </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
-          <p>My Account</p>
+          <p className="text-lg">{`@${data?.handle}` ?? "My Account"}</p>
           <p className="text-xs leading-none text-muted-foreground">
             {user.email}
           </p>
@@ -91,18 +105,7 @@ export default async function AuthButton() {
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
-        <DropdownMenuGroup>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Light</DropdownMenuItem>
-                <DropdownMenuItem>Dark</DropdownMenuItem>
-                <DropdownMenuItem>System</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
+        <ModeToggle />
         <DropdownMenuItem>GitHub</DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action={signOutAction}>

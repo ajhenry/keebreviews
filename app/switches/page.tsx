@@ -68,12 +68,15 @@ export default function CommonFeatures() {
     "clicky",
   ]);
 
+  const headerClass = "bg-secondary p-0 outline-none";
+
   const columns = useMemo(() => {
     const data: Column<Row, SummaryRow>[] = [
       {
         key: "type",
         name: "Type",
         sortable: true,
+        headerCellClass: headerClass,
         renderHeaderCell: (props) => {
           return (
             <Button variant="ghost" className="w-full">
@@ -109,6 +112,7 @@ export default function CommonFeatures() {
         name: "Name",
         frozen: false,
         resizable: true,
+        headerCellClass: headerClass,
         renderHeaderCell: (props) => {
           return (
             <Button variant="ghost" className="w-full">
@@ -125,11 +129,23 @@ export default function CommonFeatures() {
         },
       },
       {
-        key: "review",
+        key: "score",
         name: "Score",
         sortable: true,
+        headerCellClass: headerClass,
         renderHeaderCell: (props) => {
-          return "Score";
+          return (
+            <Button variant="ghost" className="w-full">
+              Score
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
         },
         renderCell: (props) => {
           return <div>100</div>;
@@ -170,7 +186,8 @@ export default function CommonFeatures() {
   return (
     <div className="w-full">
       <DataGrid
-        className="w-full h-full"
+        className="w-full h-full bg-transparent"
+        rowClass={() => "bg-transparent outline-none hover:bg-muted"}
         ref={gridRef}
         rowKeyGetter={rowKeyGetter}
         columns={columns}

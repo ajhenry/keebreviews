@@ -21,7 +21,7 @@ import { useFormState } from "react-dom";
 import { useServerAction } from "zsa-react";
 import { onboardingAction } from "@/app/zsa-actions";
 import { onboardingFormSchema } from "@/app/schemas";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function UserOnboarding() {
   const { isPending, execute, data } = useServerAction(onboardingAction);
@@ -48,13 +48,14 @@ export default function UserOnboarding() {
   const username = form.watch("username");
 
   const checkUsernameAvailability = async (username: string) => {
-    const supabase = createClient();
-    const { count, error } = await supabase
-      .from("User")
-      .select("handle")
-      .eq("handle", username);
+    const res = await fetch(`/onboarding/api/?handle=${username}`);
+    const json = await res.json();
 
-    return (count === 0 || !count) && !error;
+    if (json.error) {
+      return false;
+    }
+
+    return json.available;
   };
 
   // Custom debounce function
@@ -64,6 +65,12 @@ export default function UserOnboarding() {
     }
     debounceTimeout.current = setTimeout(async () => {
       const available = await checkUsernameAvailability(username);
+      if (!available) {
+        form.setError("username", {
+          type: "custom",
+          message: "Username is not available",
+        });
+      }
       setIsAvailable(available);
     }, 300);
   };
@@ -116,11 +123,11 @@ export default function UserOnboarding() {
               <FormControl>
                 <Input placeholder="Username" {...field} />
               </FormControl>
-              <FormDescription>
-                {username && isAvailable && !form.formState.errors.username && (
+              {username && isAvailable && !form.formState.errors.username && (
+                <FormDescription>
                   <span>Username is available</span>
-                )}
-              </FormDescription>
+                </FormDescription>
+              )}
               <FormMessage />
             </FormItem>
           )}

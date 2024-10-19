@@ -186,7 +186,7 @@ export default function CommonFeatures() {
   return (
     <div className="w-full">
       <DataGrid
-        className="w-full h-full bg-transparent"
+        className="w-full h-full bg-transparent text-foreground"
         rowClass={() => "bg-transparent outline-none hover:bg-muted"}
         ref={gridRef}
         rowKeyGetter={rowKeyGetter}

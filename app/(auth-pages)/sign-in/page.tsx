@@ -1,43 +1,99 @@
 import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
+import { Icons } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { UserAuthForm } from "@/components/user-auth-form";
+import { cn } from "@/utils/cn";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Authentication",
+  description: "Authentication forms built using the components.",
+};
 
 export default function Login({ searchParams }: { searchParams: Message }) {
   return (
-    <form className="flex-1 flex flex-col min-w-64">
-      <h1 className="text-2xl font-medium">Sign in</h1>
-      <p className="text-sm text-foreground">
-        Don't have an account?{" "}
-        <Link className="text-foreground font-medium underline" href="/sign-up">
-          Sign up
-        </Link>
-      </p>
-      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <Label htmlFor="email">Email</Label>
-        <Input name="email" placeholder="you@example.com" required />
-        <div className="flex justify-between items-center">
-          <Label htmlFor="password">Password</Label>
+    <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      <div className="flex flex-col space-y-2 text-center">
+        <h1 className="text-4xl font-semibold tracking-tight">Login</h1>
+        <p className="text-sm text-muted-foreground">
+          Don't have an account?{" "}
           <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
+            className="text-foreground font-medium underline"
+            href="/sign-up"
           >
-            Forgot Password?
+            Sign up
           </Link>
-        </div>
-        <Input
-          type="password"
-          name="password"
-          placeholder="Your password"
-          required
-        />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
-          Sign in
-        </SubmitButton>
-        <FormMessage message={searchParams} />
+        </p>
       </div>
-    </form>
+      <FormMessage message={searchParams} />
+      <div className={cn("grid gap-6")}>
+        <form>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                placeholder="you@example.com"
+                type="email"
+                autoCapitalize="none"
+                autoComplete="email"
+                autoCorrect="off"
+                name="email"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                type="password"
+                name="password"
+                placeholder="Your password"
+                required
+              />
+              <Link
+                className="text-xs text-foreground underline"
+                href="/forgot-password"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+            <SubmitButton
+              pendingText="Signing In..."
+              formAction={signInAction}
+              className="w-full"
+            >
+              Sign in
+            </SubmitButton>
+          </div>
+        </form>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or sign in with
+            </span>
+          </div>
+        </div>
+        <Button variant="outline" type="button">
+          <Icons.gitHub className="mr-2 h-4 w-4" />
+          GitHub
+        </Button>
+      </div>
+    </div>
   );
 }

@@ -92,7 +92,9 @@ export function CommandMenu({ ...props }: DialogProps) {
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup key="review" heading="Commands">
             <CommandItem
-              onSelect={() => runCommand(() => router.push(`/switches/new`))}
+              onSelect={() =>
+                runCommand(() => router.push(`/switches/reviews/new`))
+              }
             >
               <Pencil1Icon className="mr-2 h-4 w-4" />
               Write a Review

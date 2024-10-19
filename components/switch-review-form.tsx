@@ -72,7 +72,7 @@ const RatingSlider = ({
   );
 };
 
-export default function NewReview() {
+export function SwitchReviewForm() {
   const [selectedSwitch, setSelectedSwitch] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

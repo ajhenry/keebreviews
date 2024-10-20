@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
-import { generateScore, normalizedScore } from "@/utils/score";
+import { generateScore, normalizedScore, ratingsMap } from "@/utils/score";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
@@ -130,51 +130,20 @@ export function SwitchReviewForm() {
             <h2 className="text-xl">Score</h2>
           </div>
           <div className="w-full space-y-8">
-            <RatingSlider
-              form={form}
-              name="travel"
-              low="Too Short"
-              middle="Perfect Travel"
-              high="Too Long"
-              label="Travel"
-              description="How far does the switch travel?"
-            />
-            <RatingSlider
-              form={form}
-              name="weight"
-              low="Too Light"
-              middle="Perfect Weight"
-              high="Too Heavy"
-              label="Weight"
-              description="How heavy is the switch?"
-            />
-            <RatingSlider
-              form={form}
-              name="sound"
-              low="Too Quiet"
-              middle="Perfect Sound"
-              high="Too Loud"
-              label="Sound"
-              description="How loud is the switch?"
-            />
-            <RatingSlider
-              form={form}
-              name="typing"
-              low="Better for Gaming"
-              middle="Perfect for Both"
-              high="Better for Typing"
-              label="Typing"
-              description="How does the switch feel for typing?"
-            />
-            <RatingSlider
-              form={form}
-              name="feel"
-              low="Too Scratchy"
-              middle="Perfect Feel"
-              high="Too Loose"
-              label="Feel"
-              description="How does the overall switch feel?"
-            />
+            {Object.values(ratingsMap).map((ratingCategory) => (
+              <RatingSlider
+                form={form}
+                key={ratingCategory.name}
+                name={
+                  ratingCategory.name as keyof z.infer<typeof reviewFormSchema>
+                }
+                low={ratingCategory.low}
+                middle={ratingCategory.middle}
+                high={ratingCategory.high}
+                label={ratingCategory.label}
+                description={ratingCategory.description}
+              />
+            ))}
             <div>
               <FormField
                 control={form.control}

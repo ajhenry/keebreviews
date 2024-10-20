@@ -1,6 +1,6 @@
 import { Review } from "@prisma/client";
 import { Slider } from "./ui/slider";
-import { Ratings } from "@/utils/score";
+import { Ratings, ratingsMap } from "@/utils/score";
 
 export const RatingSlider = ({
   value,
@@ -38,38 +38,38 @@ export const TotalReviewSlider = ({ review }: { review: Review }) => {
     <div className="space-y-2 max-w-[600px] w-full">
       <RatingSlider
         value={travel}
-        low="Too Short"
-        middle="Perfect Travel"
-        high="Too Long"
-        label="Travel"
+        low={ratingsMap.travel.low}
+        middle={ratingsMap.travel.middle}
+        high={ratingsMap.travel.high}
+        label={ratingsMap.travel.label}
       />
       <RatingSlider
         value={weight}
-        low="Too Light"
-        middle="Perfect Weight"
-        high="Too Heavy"
-        label="Weight"
+        low={ratingsMap.weight.low}
+        middle={ratingsMap.weight.middle}
+        high={ratingsMap.weight.high}
+        label={ratingsMap.weight.label}
       />
       <RatingSlider
         value={sound}
-        low="Too Quiet"
-        middle="Perfect Sound"
-        high="Too Loud"
-        label="Sound"
+        low={ratingsMap.sound.low}
+        middle={ratingsMap.sound.middle}
+        high={ratingsMap.sound.high}
+        label={ratingsMap.sound.label}
       />
       <RatingSlider
         value={typing}
-        low="Better for Gaming"
-        middle="Perfect for Both"
-        high="Better for Typing"
-        label="Typing"
+        low={ratingsMap.typing.low}
+        middle={ratingsMap.typing.middle}
+        high={ratingsMap.typing.high}
+        label={ratingsMap.typing.label}
       />
       <RatingSlider
         value={feel}
-        low="Too Scratchy"
-        middle="Perfect Feel"
-        high="Too Loose"
-        label="Feel"
+        low={ratingsMap.feel.low}
+        middle={ratingsMap.feel.middle}
+        high={ratingsMap.feel.high}
+        label={ratingsMap.feel.label}
       />
     </div>
   );

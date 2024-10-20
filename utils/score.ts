@@ -8,6 +8,49 @@ export interface Ratings {
   typing: number;
 }
 
+export const ratingsMap = {
+  travel: {
+    name: "travel",
+    low: "Too Short",
+    middle: "Perfect Travel",
+    high: "Too Long",
+    label: "Travel",
+    description: "How far does the switch travel?",
+  },
+  weight: {
+    name: "weight",
+    low: "Too Light",
+    middle: "Perfect Weight",
+    high: "Too Heavy",
+    label: "Weight",
+    description: "How heavy is the switch?",
+  },
+  typing: {
+    name: "typing",
+    low: "Better for Gaming",
+    middle: "Perfect for Both",
+    high: "Better for Typing",
+    label: "Typing",
+    description: "How does the switch feel for typing?",
+  },
+  sound: {
+    name: "sound",
+    low: "Softer",
+    middle: "Perfect Sound",
+    high: "Louder",
+    label: "Sound",
+    description: "How loud is the switch?",
+  },
+  feel: {
+    name: "feel",
+    low: "Underwhelming",
+    middle: "Satisfying",
+    high: "Overwhelming",
+    label: "Feel",
+    description: "How does the overall switch feel?",
+  },
+};
+
 // normalizes a single score from 50 to a 0-100 scale
 export const normalizedScore = (score: number) => {
   return (100 - Math.abs(50 - score) * 2) / 5;

@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { getSwitchById } from "@/switchdb/src";
 import { Badge } from "@/components/ui/badge";
+import { generateScore } from "@/utils/score";
 
 export default async function UserSwitchReview({
   params,
@@ -58,6 +59,8 @@ export default async function UserSwitchReview({
 
   console.log("created at", review);
 
+  const score = generateScore(review.ratings);
+
   return (
     <div className="flex-1 w-full flex flex-col">
       <div className="flex flex-col items-center">
@@ -94,18 +97,26 @@ export default async function UserSwitchReview({
           </Button>
         </Link>
       </div>
+      <div>
+        <div className="text-center mt-8">
+          <h2 className="font-black text-6xl">{score}/100</h2>
+        </div>
+      </div>
 
       <div className="mt-8 flex flex-col items-center">
         <TotalReviewSlider review={review} />
       </div>
       <div className="flex flex-col items-center mt-4 text-muted-foreground">
-        <p className="space-x-2">
+        <p className="">
           Review published by
-          <Link href={`/users/${userData?.handle}`} className="inline-block">
+          <Link
+            href={`/users/${userData?.handle}`}
+            className="inline-block mx-1"
+          >
             <Button
               variant="outline"
               className={cn(
-                "mx-2 px-2 relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none h-8"
+                "px-2 relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none h-8"
               )}
             >
               <div className="space-x-2 flex flex-row items-center">

@@ -13,7 +13,6 @@ import {
 } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 
-import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import {
   CommandDialog,
@@ -25,6 +24,7 @@ import {
   CommandSeparator,
 } from "./ui/command";
 import { Brand, MechanicalKeySwitch, getAllSwitches } from "@/switchdb/src";
+import { cn } from "@/utils/cn";
 
 export function CommandMenu({ ...props }: DialogProps) {
   const router = useRouter();

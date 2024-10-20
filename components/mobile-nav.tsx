@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ViewVerticalIcon } from "@radix-ui/react-icons";
 
 import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { Icons } from "@/components/icons";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";

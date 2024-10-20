@@ -17,12 +17,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import {
   MechanicalKeySwitch,
   getAllSwitches,
   getSwitchById,
 } from "@/switchdb/src";
+import { cn } from "@/utils/cn";
 
 const toLabel = (sw: MechanicalKeySwitch) => {
   return {

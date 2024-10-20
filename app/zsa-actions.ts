@@ -81,6 +81,6 @@ export const createReviewAction = createServerAction()
 
     return {
       success: true,
-      redirect: `/switches/${input.switchId}/reviews/${res.author?.handle}/`,
+      redirect: `/switches/${input.switchId}/reviews/${res.author?.handle}`,
     };
   });

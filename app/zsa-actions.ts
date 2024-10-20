@@ -5,6 +5,7 @@ import { onboardingFormSchema, reviewFormSchema } from "./schemas";
 import { createClient } from "@/utils/supabase/server";
 import { prismaClient } from "@/lib/database";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 export const onboardingAction = createServerAction()
   .input(onboardingFormSchema)
@@ -83,4 +84,66 @@ export const createReviewAction = createServerAction()
       success: true,
       redirect: `/switches/${input.switchId}/reviews/${res.author?.handle}`,
     };
+  });
+
+export const deleteReviewAction = createServerAction()
+  .input(
+    z.object({
+      reviewId: z.string(),
+    })
+  )
+  .handler(async ({ input }) => {
+    const { reviewId } = input;
+
+    const supabase = createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    const review = await prismaClient.review.delete({
+      where: {
+        id: reviewId,
+        authorId: user!.id,
+      },
+    });
+
+    return { success: true };
+  });
+
+export const updateReviewVisibilityAction = createServerAction()
+  .input(
+    z.object({
+      reviewId: z.string(),
+      visibility: z.boolean(),
+    })
+  )
+  .handler(async ({ input }) => {
+    const { reviewId, visibility } = input;
+
+    const supabase = createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    const review = await prismaClient.review.update({
+      where: {
+        id: reviewId,
+        authorId: user!.id,
+      },
+      data: {
+        published: visibility,
+      },
+    });
+
+    return { success: true };
   });

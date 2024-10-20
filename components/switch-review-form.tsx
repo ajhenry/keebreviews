@@ -16,16 +16,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
+import { generateScore, normalizedScore } from "@/utils/score";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
-
-const normalizedScore = (score: number) => {
-  return (100 - Math.abs(50 - score) * 2) / 5;
-};
 
 const RatingSlider = ({
   form,
@@ -104,12 +101,13 @@ export function SwitchReviewForm() {
     }
   };
 
-  const score =
-    normalizedScore(form.watch("travel")) +
-    normalizedScore(form.watch("weight")) +
-    normalizedScore(form.watch("feel")) +
-    normalizedScore(form.watch("sound")) +
-    normalizedScore(form.watch("typing"));
+  const score = generateScore({
+    travel: form.watch("travel"),
+    weight: form.watch("weight"),
+    feel: form.watch("feel"),
+    sound: form.watch("sound"),
+    typing: form.watch("typing"),
+  });
 
   return (
     <Form {...form}>

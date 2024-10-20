@@ -9,20 +9,27 @@ generator client {
 }
 
 model Review {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   switchId  String
   ratings   Json
   title     String?
   content   String?
-  published Boolean @default(true)
-  author    User?   @relation(fields: [authorId], references: [id])
+  published Boolean  @default(true)
+  author    User?    @relation(fields: [authorId], references: [id])
   authorId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model User {
-  id      String   @id @default(cuid())
-  email   String   @unique
-  name    String?
-  reviews Review[]
-  handle  String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  reviews   Review[]
+  handle    String    @unique
+  admin     Boolean   @default(false)
+  banned    Boolean   @default(true)
+  bannedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 }

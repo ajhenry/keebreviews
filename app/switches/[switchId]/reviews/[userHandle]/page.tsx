@@ -15,6 +15,28 @@ import dayjs from "dayjs";
 import { getSwitchById } from "@/switchdb/src";
 import { Badge } from "@/components/ui/badge";
 import { generateScore } from "@/utils/score";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { UpdateReviewFlash } from "@/components/update-review-flash";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export default async function UserSwitchReview({
   params,
@@ -23,15 +45,21 @@ export default async function UserSwitchReview({
 }) {
   const { userHandle, switchId } = params;
 
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   // see if they completed onboarding
-  const userData = await prismaClient.user.findFirst({
+  const authorData = await prismaClient.user.findFirst({
     where: {
       handle: userHandle,
     },
   });
 
   // TODO: need to do something about this
-  if (!userData) {
+  if (!authorData) {
     return redirect("/404");
   }
 
@@ -57,42 +85,102 @@ export default async function UserSwitchReview({
     return redirect("/404");
   }
 
+  if (!review.published && review.authorId !== user?.id) {
+    return redirect("/404");
+  }
+
   console.log("created at", review);
 
   const score = generateScore(review.ratings);
 
   return (
     <div className="flex-1 w-full flex flex-col">
-      <div className="flex flex-col items-center">
+      <div>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/switches">Switches</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/switches?brand=${switchDef?.brand.name}`}>
+                {switchDef?.brand.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/switches/${switchDef?.id}`}>
+                {switchDef?.friendlyName}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/switches/${switchDef?.friendlyName}`}>
+                Reviews
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                className="text-foreground"
+                href={`/users/${authorData.handle}`}
+              >
+                @{authorData.handle}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      {user?.id === authorData.id && (
+        <UpdateReviewFlash
+          switchId={switchId}
+          userHandle={userHandle}
+          review={review}
+        />
+      )}
+      <div className="flex flex-col items-center mt-4">
         <Link href={`/switches/${switchId}`}>
           <Button
             variant="outline"
             className={cn(
-              "relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none"
+              "relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none h-auto"
             )}
           >
-            <div className="space-x-2 flex flex-row items-center w-full">
+            <div className="flex flex-row items-center w-full">
               <div className="flex-1">
-                <div className="block">
-                  <h1 className="text-xl font-bold">
+                <div className="flex flex-col items-start">
+                  <h1 className="text-lg font-semibold text-wrap text-left">
                     {switchDef?.friendlyName}
                   </h1>
-                  <Badge
-                    className="mx-2 inline-block"
-                    variant={
-                      switchDef.spec.type === "linear"
-                        ? "default"
-                        : switchDef.spec.type === "tactile"
-                          ? "secondary"
-                          : "destructive"
-                    }
-                  >
-                    {switchDef.spec.type}
-                  </Badge>
+                  <div className="flex flex-row space-x-2">
+                    <Badge
+                      className="inline-block"
+                      variant={
+                        switchDef.spec.type === "linear"
+                          ? "default"
+                          : switchDef.spec.type === "tactile"
+                            ? "secondary"
+                            : "destructive"
+                      }
+                    >
+                      {switchDef.spec.type}
+                    </Badge>
+                    <div className="underline">
+                      {switchDef.spec.force.actuation?.value}
+                      {switchDef.spec.force.actuation?.unit}/
+                      {switchDef.spec.force.actuation?.value}
+                      {switchDef.spec.force.actuation?.unit}
+                    </div>
+                    <div className="underline">
+                      {switchDef.spec.travel.pre?.value}
+                      {switchDef.spec.travel.pre?.unit}/
+                      {switchDef.spec.travel.total?.value}
+                      {switchDef.spec.travel.total?.unit}
+                    </div>
+                  </div>
                 </div>
-                <div>ANother line</div>
               </div>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 ml-4" />
             </div>
           </Button>
         </Link>
@@ -110,7 +198,7 @@ export default async function UserSwitchReview({
         <p className="">
           Review published by
           <Link
-            href={`/users/${userData?.handle}`}
+            href={`/users/${authorData?.handle}`}
             className="inline-block mx-1"
           >
             <Button
@@ -124,13 +212,13 @@ export default async function UserSwitchReview({
                   <AvatarFallback>
                     <PrettyAvatar
                       colors={["#5B756C", "#748B83", "#9A947C"]}
-                      name={userData?.handle ?? "user"}
+                      name={authorData?.handle ?? "user"}
                       variant="smile"
                       size={10000000}
                     />
                   </AvatarFallback>
                 </Avatar>
-                <h1 className="">@{userData?.handle}</h1>
+                <h1 className="">@{authorData?.handle}</h1>
               </div>
             </Button>
           </Link>

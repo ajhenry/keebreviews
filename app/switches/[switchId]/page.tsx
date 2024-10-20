@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Force, ForceUnit, Travel } from "@/switchdb/src/types";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Spec {
   label: string;
@@ -206,7 +208,12 @@ export default function NewReview({
             </TableBody>
           </Table>
         </div>
-        <h2 className="text-2xl font-semibold mt-4">Reviews</h2>
+        <div className="flex flex-row justify-between items-center">
+          <h2 className="text-2xl font-semibold">Reviews</h2>
+          <Link href={`/switches/reviews/new`}>
+            <Button variant="outline">Submit Review</Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

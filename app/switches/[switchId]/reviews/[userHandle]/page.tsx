@@ -65,7 +65,7 @@ export default async function UserSwitchReview({
           <Button
             variant="outline"
             className={cn(
-              "relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none min-w-[450px]"
+              "relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none"
             )}
           >
             <div className="space-x-2 flex flex-row items-center w-full">
@@ -99,9 +99,9 @@ export default async function UserSwitchReview({
         <TotalReviewSlider review={review} />
       </div>
       <div className="flex flex-col items-center mt-4 text-muted-foreground">
-        <p className="items-center flex flex-row space-x-2">
+        <p className="space-x-2">
           Review published by
-          <Link href={`/users/${userData?.handle}`}>
+          <Link href={`/users/${userData?.handle}`} className="inline-block">
             <Button
               variant="outline"
               className={cn(

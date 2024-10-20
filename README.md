@@ -23,3 +23,4 @@ Rating categories include:
 - Finish review page
 - Add reviews table to switch page
 - Add search to switches page
+- Add 404 pages

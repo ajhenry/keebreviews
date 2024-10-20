@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Force, ForceUnit, Travel } from "@/switchdb/src/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { formatForce, formatTravel } from "@/utils/force";
 
 interface Spec {
   label: string;
@@ -37,43 +38,6 @@ export default function NewReview({
       value: kbSwitch?.spec.variation,
     },
   ];
-
-  const formatTravel = (travel: Travel) => {
-    let base = `${travel.value}${travel.unit}`;
-
-    if (travel.tolerance) {
-      base += ` ${
-        travel.tolerance?.sign === "plus_minus"
-          ? "±"
-          : travel.tolerance?.sign === "minus"
-            ? "-"
-            : ""
-      } ${travel.tolerance?.value}${travel.unit}`;
-    }
-
-    return base;
-  };
-
-  const formatForce = (force: Force) => {
-    if (force.unit === "cn") {
-      // convert to gf
-      force.convert(ForceUnit.GramForce);
-    }
-
-    let base = `${force.value}${force.unit}`;
-
-    if (force.tolerance) {
-      base += ` ${
-        force.tolerance?.sign === "plus_minus"
-          ? "±"
-          : force.tolerance?.sign === "minus"
-            ? "-"
-            : ""
-      } ${force.tolerance?.value}${force.unit}`;
-    }
-
-    return base;
-  };
 
   // if the switch is a linear, we need to show force and travel
   if (kbSwitch?.spec.force.actuation) {

@@ -22,6 +22,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
+import { formatForce, formatTravel } from "@/utils/force";
 const DataGrid = dynamic(() => import("react-data-grid"), { ssr: false });
 
 interface SummaryRow {
@@ -127,6 +129,13 @@ export default function CommonFeatures() {
             </Button>
           );
         },
+        renderCell: (props) => {
+          return (
+            <Link href={`/switches/${props.row.id}`}>
+              {props.row.friendlyName}
+            </Link>
+          );
+        },
       },
       {
         key: "score",
@@ -148,7 +157,152 @@ export default function CommonFeatures() {
           );
         },
         renderCell: (props) => {
-          return <div>100</div>;
+          return <div className="text-center">100</div>;
+        },
+      },
+      {
+        key: "actuation",
+        name: "Actuation",
+        sortable: true,
+        headerCellClass: headerClass,
+        renderHeaderCell: (props) => {
+          return (
+            <Button variant="ghost" className="w-full">
+              Actuation
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
+        },
+        renderCell: (props) => {
+          return (
+            <div className="text-center">
+              {props.row.spec.force.actuation
+                ? formatForce(props.row.spec.force.actuation)
+                : "—"}
+            </div>
+          );
+        },
+      },
+      {
+        key: "tactileForce",
+        name: "Tactile Force",
+        sortable: true,
+        headerCellClass: headerClass,
+        renderHeaderCell: (props) => {
+          return (
+            <Button variant="ghost" className="w-full">
+              Tactile Force
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
+        },
+        renderCell: (props) => {
+          return (
+            <div className="text-center">
+              {props.row.spec.type === "tactile" && props.row.spec.force.tactile
+                ? formatForce(props.row.spec.force.tactile)
+                : "—"}
+            </div>
+          );
+        },
+      },
+      {
+        key: "bottomOut",
+        name: "Bottom Out",
+        sortable: true,
+        headerCellClass: headerClass,
+        renderHeaderCell: (props) => {
+          return (
+            <Button variant="ghost" className="w-full">
+              Bottom Out
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
+        },
+        renderCell: (props) => {
+          return (
+            <div className="text-center">
+              {props.row.spec.force.bottom
+                ? formatForce(props.row.spec.force.bottom)
+                : "—"}
+            </div>
+          );
+        },
+      },
+      {
+        key: "pretravel",
+        name: "Pre-Travel",
+        sortable: true,
+        headerCellClass: headerClass,
+        renderHeaderCell: (props) => {
+          return (
+            <Button variant="ghost" className="w-full">
+              Pre-Travel
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
+        },
+        renderCell: (props) => {
+          return (
+            <div className="text-center">
+              {props.row.spec.travel.pre
+                ? formatTravel(props.row.spec.travel.pre)
+                : "—"}
+            </div>
+          );
+        },
+      },
+      {
+        key: "totalTravel",
+        name: "Total Travel",
+        sortable: true,
+        headerCellClass: headerClass,
+        renderHeaderCell: (props) => {
+          return (
+            <Button variant="ghost" className="w-full">
+              Total Travel
+              {props.sortDirection === "ASC" ? (
+                <CaretUpIcon className="ml-2 h-4 w-4" />
+              ) : props.sortDirection === "DESC" ? (
+                <CaretDownIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <CaretSortIcon className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          );
+        },
+        renderCell: (props) => {
+          return (
+            <div className="text-center">
+              {props.row.spec.travel.total
+                ? formatTravel(props.row.spec.travel.total)
+                : "—"}
+            </div>
+          );
         },
       },
     ];

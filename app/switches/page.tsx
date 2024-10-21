@@ -338,23 +338,27 @@ export default function CommonFeatures() {
   }, [filteredRows, sortColumns]);
 
   return (
-    <div className="w-full">
-      <DataGrid
-        className="w-full h-full bg-transparent text-foreground"
-        rowClass={() => "bg-transparent outline-none hover:bg-muted"}
-        ref={gridRef}
-        rowKeyGetter={rowKeyGetter}
-        columns={columns}
-        rows={sortedRows}
-        defaultColumnOptions={{
-          sortable: true,
-          resizable: true,
-        }}
-        onRowsChange={setRows}
-        sortColumns={sortColumns}
-        onSortColumnsChange={setSortColumns}
-        enableVirtualization={!isExporting}
-      />
+    <div className="absolute left-0 right-0 top-0 bottom-0 max-w-screen-2xl">
+      <div className="relative mt-24 px-2 sm:px-12">
+        <div className="h-[85vh] xl:h-[90vh] mx-auto">
+          <DataGrid
+            className="w-full h-full bg-transparent text-foreground"
+            rowClass={() => "bg-transparent outline-none hover:bg-muted"}
+            ref={gridRef}
+            rowKeyGetter={rowKeyGetter}
+            columns={columns}
+            rows={sortedRows}
+            defaultColumnOptions={{
+              sortable: true,
+              resizable: true,
+            }}
+            onRowsChange={setRows}
+            sortColumns={sortColumns}
+            onSortColumnsChange={setSortColumns}
+            enableVirtualization={!isExporting}
+          />
+        </div>
+      </div>
     </div>
   );
 }

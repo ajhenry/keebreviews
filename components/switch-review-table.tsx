@@ -83,7 +83,7 @@ export const SwitchReviewTable = ({ reviews }: UserReviewTableProps) => {
   };
 
   return (
-    <Table className="mt-2">
+    <Table className="mt-2 w-full">
       <TableHeader>
         <TableRow className="p-0 m-0">
           <TableHead></TableHead>

@@ -48,19 +48,18 @@ export default function RootLayout({
                 <div className="w-full py-8 h-full">{children}</div>
               </Container>
 
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0">
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0 h-8">
                 <p>
-                  Powered by{" "}
+                  Made with ❤️ by{" "}
                   <a
-                    href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
+                    href="https://ajhenry.com"
                     target="_blank"
                     className="font-bold hover:underline"
                     rel="noreferrer"
                   >
-                    Supabase
+                    ajhenry
                   </a>
                 </p>
-                <ThemeSwitcher />
               </footer>
             </div>
           </main>

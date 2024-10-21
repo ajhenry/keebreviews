@@ -1,39 +1,58 @@
+import Link from "next/link";
 import { HeroSwitchSearch } from "./hero-switch-search";
 import NextLogo from "./next-logo";
 import SupabaseLogo from "./supabase-logo";
+import { Button } from "./ui/button";
+import { prismaClient } from "@/lib/database";
+import { SwitchReviewTable } from "./switch-review-table";
 
-export default function Header() {
+export default async function Header() {
+  const recentReviews = await prismaClient.review.findMany({
+    include: {
+      author: true,
+    },
+    take: 10,
+  });
+
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
-      </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        User reviews of all things keyboard switches
-      </p>
-      <h2>Search for a Switch</h2>
-      <div className="w-full">
+    <div className="flex flex-col gap-16 items-center mt-12">
+      <section className="">
+        <div className="container text-center">
+          <div className="mx-auto flex max-w-screen-lg flex-col gap-6">
+            <h1 className="text-3xl font-extrabold lg:text-6xl">
+              Community Powered Keyboard Reviews
+            </h1>
+            <p className="text-balance text-muted-foreground lg:text-lg">
+              A place to find and share reviews of keyboard switches.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="w-full">
         <HeroSwitchSearch />
-      </div>
-
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
-      <div>
-        <h2>Recent Reviews</h2>
-      </div>
-      <div>
-        <h2>Popular Switches</h2>
-      </div>
+        <div className="relative my-6 mx-16">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or</span>
+          </div>
+        </div>
+        <Link href="switches">
+          <Button variant="link" className="w-full text-lg h-12">
+            Browse all switches
+          </Button>
+        </Link>
+      </section>
+      <section className="w-full">
+        <h2 className="text-center text-2xl font-extrabold lg:text-4xl">
+          Recent Reviews
+        </h2>
+        <p className="text-balance text-muted-foreground lg:text-base mt-2 text-center">
+          Recent reviews from the community.
+        </p>
+        <SwitchReviewTable reviews={recentReviews} />
+      </section>
     </div>
   );
 }

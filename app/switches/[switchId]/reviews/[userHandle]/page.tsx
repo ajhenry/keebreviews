@@ -138,12 +138,19 @@ export default async function UserSwitchReview({
           review={review}
         />
       )}
-      <div className="flex flex-col items-center mt-4">
-        <Link href={`/switches/${switchId}`}>
+
+      <div>
+        <div className="text-center mt-8">
+          <h2 className="font-black text-6xl">{score}/100</h2>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center mt-8 w-full sm:px-12">
+        <Link href={`/switches/${switchId}`} className="w-full">
           <Button
             variant="outline"
             className={cn(
-              "relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none h-auto"
+              "w-full relative justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal shadow-none h-auto"
             )}
           >
             <div className="flex flex-row items-center w-full">
@@ -185,16 +192,12 @@ export default async function UserSwitchReview({
           </Button>
         </Link>
       </div>
-      <div>
-        <div className="text-center mt-8">
-          <h2 className="font-black text-6xl">{score}/100</h2>
-        </div>
-      </div>
 
-      <div className="mt-8 flex flex-col items-center">
+      <div className="mt-4 flex flex-col items-center">
         <TotalReviewSlider review={review} />
       </div>
-      <div className="flex flex-col items-center mt-4 text-muted-foreground">
+
+      <div className="flex flex-col items-center mt-4 text-muted-foreground sm:px-12">
         <p className="">
           Review published by
           <Link
@@ -223,13 +226,13 @@ export default async function UserSwitchReview({
             </Button>
           </Link>
           on {dayjs(review.createdAt).format("MMM D, YYYY H:mm:ss A")}
-          {review.updatedAt !== review.createdAt &&
+          {!dayjs(review.createdAt).isSame(review.updatedAt) &&
             ` (edited ${dayjs(review.updatedAt).format("MMM D, YYYY H:mm:ss A")})`}
         </p>
       </div>
       {review.title && (
-        <div className="mt-8">
-          <h1 className="text-4xl font-bold">{review.title}</h1>
+        <div className="mt-12">
+          <h1 className="text-4xl font-bold text-center">{review.title}</h1>
         </div>
       )}
       {review.content && (

@@ -67,44 +67,34 @@ export function HeroSwitchSearch({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="w-full justify-end text-xl h-12"
         >
-          {value
-            ? selectedSwitch
-              ? toLabel(selectedSwitch)?.label
-              : (placeholder ?? "Select a switch...")
-            : (placeholder ?? "Select a switch...")}
+          <span className="absolute right-0 left-0">Find a Switch</span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="relative popover-content-width-full p-0">
         <Command>
-          <CommandInput placeholder="Search switches..." />
-          <CommandList className="relative w-full">
-            <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="" className="text-lg" />
+          <CommandList className="relative w-full text-lg">
+            <CommandEmpty>No switches found.</CommandEmpty>
             <CommandGroup>
-              {keyboardSwitches.map((framework) => (
+              {keyboardSwitches.map((keyboardSwitch) => (
                 <Link
-                  href={`/switches/${framework.value}`}
-                  key={framework.value}
+                  href={`/switches/${keyboardSwitch.value}`}
+                  key={keyboardSwitch.value}
                 >
                   <CommandItem
-                    value={framework.value}
+                    className="text-base cursor-pointer"
+                    value={keyboardSwitch.value}
                     onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
                       setOpen(false);
                     }}
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === framework.value ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {framework.label}
+                    {keyboardSwitch.label}
                   </CommandItem>
                 </Link>
               ))}

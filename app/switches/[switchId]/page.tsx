@@ -14,13 +14,15 @@ import { Force, ForceUnit, Travel } from "@/switchdb/src/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatForce, formatTravel } from "@/utils/force";
+import { SwitchReviewTable } from "@/components/switch-review-table";
+import { prismaClient } from "@/lib/database";
 
 interface Spec {
   label: string;
   value: string | JSX.Element | number | undefined;
 }
 
-export default function NewReview({
+export default async function NewReview({
   params,
 }: {
   params: { switchId: string };
@@ -131,6 +133,16 @@ export default function NewReview({
     });
   }
 
+  const reviews = await prismaClient.review.findMany({
+    where: {
+      switchId: switchId,
+      published: true,
+    },
+    include: {
+      author: true,
+    },
+  });
+
   const switchName = `${kbSwitch?.brand.name} ${kbSwitch?.spec.model}`;
 
   return (
@@ -153,10 +165,10 @@ export default function NewReview({
         </BreadcrumbList>
       </Breadcrumb>
       <div className="">
-        <h1 className="text-4xl font-bold">
-          {kbSwitch?.friendlyName}{" "}
+        <div className="flex flex-row flex-wrap items-center">
+          <h1 className="text-4xl font-bold mr-2">{kbSwitch?.friendlyName} </h1>
           <Badge className="capitalize">{kbSwitch?.spec.type}</Badge>
-        </h1>
+        </div>
         <h2 className="text-2xl font-semibold mt-4">Specs</h2>
         <div>
           <Table className="">
@@ -172,11 +184,14 @@ export default function NewReview({
             </TableBody>
           </Table>
         </div>
-        <div className="flex flex-row justify-between items-center">
-          <h2 className="text-2xl font-semibold">Reviews</h2>
-          <Link href={`/switches/reviews/new`}>
-            <Button variant="outline">Submit Review</Button>
-          </Link>
+        <div className="mt-4">
+          <div className="flex flex-row justify-between items-center">
+            <h2 className="text-2xl font-semibold">Reviews</h2>
+            <Link href={`/switches/reviews/new`}>
+              <Button variant="outline">Submit Review</Button>
+            </Link>
+          </div>
+          <SwitchReviewTable reviews={reviews} />
         </div>
       </div>
     </div>

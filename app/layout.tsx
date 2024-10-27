@@ -15,6 +15,7 @@ import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
 import { SiteHeader } from "@/components/header";
+import { NextUIProvider } from "@nextui-org/react";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -41,28 +42,30 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col items-center">
-              <SiteHeader />
-              <Container className="flex-1">
-                <div className="w-full py-8 h-full">{children}</div>
-              </Container>
+          <NextUIProvider>
+            <main className="min-h-screen flex flex-col items-center">
+              <div className="flex-1 w-full flex flex-col items-center">
+                <SiteHeader />
+                <Container className="flex-1">
+                  <div className="w-full py-8 h-full">{children}</div>
+                </Container>
 
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0 h-8">
-                <p>
-                  Made with ❤️ by{" "}
-                  <a
-                    href="https://ajhenry.com"
-                    target="_blank"
-                    className="font-bold hover:underline"
-                    rel="noreferrer"
-                  >
-                    ajhenry
-                  </a>
-                </p>
-              </footer>
-            </div>
-          </main>
+                <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0 h-8">
+                  <p>
+                    Made with ❤️ by{" "}
+                    <a
+                      href="https://ajhenry.com"
+                      target="_blank"
+                      className="font-bold hover:underline"
+                      rel="noreferrer"
+                    >
+                      ajhenry
+                    </a>
+                  </p>
+                </footer>
+              </div>
+            </main>
+          </NextUIProvider>
         </ThemeProvider>
       </body>
     </html>

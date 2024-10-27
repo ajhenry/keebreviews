@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@nextui-org/react": "^2.4.8",
     "@prisma/client": "^5.20.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -39,6 +40,7 @@
     "cmdk": "^1.0.0",
     "color": "^4.2.3",
     "dayjs": "^1.11.13",
+    "framer-motion": "^11.11.10",
     "fuse.js": "^7.0.0",
     "geist": "^1.2.1",
     "isomorphic-dompurify": "^2.16.0",

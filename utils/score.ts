@@ -17,7 +17,7 @@ export const ratingToLabel = (ratings: Ratings) => {
     const highLabel = ratingsMap[category as keyof Ratings].high as string;
 
     labelMap[category as keyof Ratings] =
-      score == 50 ? middleLabel : score > 50 ? lowLabel : highLabel;
+      score == 0 ? middleLabel : score > 0 ? lowLabel : highLabel;
   }
 
   return labelMap;
@@ -66,9 +66,9 @@ export const ratingsMap = {
   },
 };
 
-// normalizes a single score from 50 to a 0-100 scale
+// normalizes a single score from 0 to a -50 to 50 scale
 export const normalizedScore = (score: number) => {
-  return (100 - Math.abs(50 - score) * 2) / 5;
+  return (100 - Math.abs(score) * 5) / 5;
 };
 
 // generates the total score for a set of scores

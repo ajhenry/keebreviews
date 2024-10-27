@@ -23,6 +23,7 @@ import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
+import { Slider as NextSlider } from "@nextui-org/slider";
 
 const RatingSlider = ({
   form,
@@ -46,14 +47,29 @@ const RatingSlider = ({
       <FormLabel>{label}</FormLabel>
       <FormDescription>{description}</FormDescription>
       <div>
-        <Slider
-          defaultValue={[form.getValues(name) as number]}
-          onValueChange={(val) => {
-            form.setValue(name, val[0]);
+        <NextSlider
+          classNames={{
+            track: "bg-secondary h-3",
           }}
-          max={100}
-          min={0}
-          step={5}
+          className="outline-background"
+          step={2}
+          minValue={-20}
+          maxValue={20}
+          fillOffset={0}
+          defaultValue={[form.getValues(name) as number]}
+          onChange={(val) => {
+            form.setValue(name, val.valueOf() as number);
+          }}
+          showSteps
+          showTooltip
+          tooltipProps={{
+            content: (
+              <div>
+                {form.getValues(name) == 0 ? "" : "-"}
+                {Math.abs(form.getValues(name)?.valueOf() as number)}
+              </div>
+            ),
+          }}
         />
         <h2 className="text-sm flex justify-between mt-1">
           <span>{low}</span>
@@ -75,11 +91,11 @@ export function SwitchReviewForm() {
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
       switchId: "",
-      travel: 50,
-      weight: 50,
-      feel: 50,
-      sound: 50,
-      typing: 50,
+      travel: 0,
+      weight: 0,
+      feel: 0,
+      sound: 0,
+      typing: 0,
     },
   });
 

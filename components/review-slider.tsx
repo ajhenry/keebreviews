@@ -1,6 +1,7 @@
 import { Review } from "@prisma/client";
 import { Slider } from "./ui/slider";
 import { Ratings, ratingsMap } from "@/utils/score";
+import { Slider as NextSlider } from "@nextui-org/slider";
 
 export const RatingSlider = ({
   value,
@@ -18,7 +19,29 @@ export const RatingSlider = ({
   return (
     <div>
       <h3 className="font-bold">{label}</h3>
-      <Slider defaultValue={[value]} max={100} min={0} step={5} disabled />
+      <NextSlider
+        classNames={{
+          base: "opacity-100",
+          track: "bg-secondary h-2",
+        }}
+        size="sm"
+        className="outline-background"
+        step={2}
+        minValue={-20}
+        maxValue={20}
+        fillOffset={0}
+        defaultValue={value}
+        showTooltip
+        tooltipProps={{
+          content: (
+            <div>
+              {value == 0 ? "" : "-"}
+              {value}
+            </div>
+          ),
+        }}
+        isDisabled
+      />
       <h4 className="text-sm flex justify-between mt-1 text-muted-foreground">
         <span>{low}</span>
         <span className="absolute left-1/2 transform -translate-x-1/2">

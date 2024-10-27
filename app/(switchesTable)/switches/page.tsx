@@ -185,7 +185,7 @@ export default function CommonFeatures() {
         },
         renderCell: (props) => {
           return (
-            <Link href={`/switches/${props.row.id}`}>
+            <Link href={`/switches/${props.row.id}`} className="font-semibold">
               {props.row.friendlyName}
             </Link>
           );
@@ -430,7 +430,13 @@ export default function CommonFeatures() {
       <div className="relative overflow-auto mb-12 mt-4">
         <DataGrid
           className="w-full h-full bg-transparent text-foreground"
-          rowClass={() => "bg-transparent outline-none hover:bg-muted"}
+          rowClass={(_, i) => {
+            let baseStyle = "bg-transparent outline-none hover:bg-muted";
+            if (i % 2 === 0) {
+              baseStyle += " bg-secondary/10 dark:bg-secondary/30";
+            }
+            return baseStyle;
+          }}
           ref={gridRef}
           rowKeyGetter={rowKeyGetter}
           columns={columns}

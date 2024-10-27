@@ -70,10 +70,8 @@ function getComparator(sortColumn: string): Comparator {
     case "tactile":
     case "bottom":
       return (a, b) => {
-        console.log(sortColumn);
         const aForce = (a.spec.force as any)?.[sortColumn]?.value;
         const bForce = (b.spec.force as any)?.[sortColumn]?.value;
-        console.log(aForce, bForce);
 
         if (!aForce && !bForce) {
           return 0;
@@ -367,8 +365,6 @@ export default function CommonFeatures() {
   }, [selectedSwitchTypes]);
 
   const search = form.watch("search");
-
-  console.log(rows);
 
   const filteredRows = useMemo((): readonly Row[] => {
     let filterRows = [...rows];

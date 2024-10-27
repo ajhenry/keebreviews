@@ -16,14 +16,22 @@ import {
 } from "@radix-ui/react-icons";
 import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { formatForce, formatTravel } from "@/utils/force";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import Fuse from "fuse.js";
 const DataGrid = dynamic(() => import("react-data-grid"), { ssr: false });
 
 interface SummaryRow {
@@ -54,10 +62,51 @@ function getComparator(sortColumn: string): Comparator {
       return (a, b) => {
         return a[sortColumn].localeCompare(b[sortColumn]);
       };
+    case "score":
+      return (a, b) => {
+        return a === b ? 0 : a > b ? 1 : -1;
+      };
+    case "actuation":
+    case "tactile":
+    case "bottom":
+      return (a, b) => {
+        console.log(sortColumn);
+        const aForce = (a.spec.force as any)?.[sortColumn]?.value;
+        const bForce = (b.spec.force as any)?.[sortColumn]?.value;
+        console.log(aForce, bForce);
+
+        if (!aForce && !bForce) {
+          return 0;
+        }
+        if (!aForce) {
+          return -1;
+        }
+        if (!bForce) {
+          return 1;
+        }
+
+        return aForce === bForce ? 0 : aForce > bForce ? 1 : -1;
+      };
+
+    case "pre":
+    case "total":
+      return (a, b) => {
+        const aTravel = (a.spec.travel as any)?.[sortColumn]?.value;
+        const bTravel = (b.spec.travel as any)?.[sortColumn]?.value;
+
+        if (aTravel && bTravel) {
+          return aTravel === bTravel ? 0 : aTravel > bTravel ? 1 : -1;
+        }
+        return 0;
+      };
     default:
       throw new Error(`unsupported sortColumn: "${sortColumn}"`);
   }
 }
+
+const searchSchema = z.object({
+  search: z.string(),
+});
 
 export default function CommonFeatures() {
   const [rows, setRows] = useState(getAllSwitches());
@@ -69,6 +118,13 @@ export default function CommonFeatures() {
     "tactile",
     "clicky",
   ]);
+
+  const form = useForm<z.infer<typeof searchSchema>>({
+    resolver: zodResolver(searchSchema),
+    defaultValues: {
+      search: "",
+    },
+  });
 
   const headerClass = "bg-secondary p-0 outline-none";
 
@@ -190,7 +246,7 @@ export default function CommonFeatures() {
         },
       },
       {
-        key: "tactileForce",
+        key: "tactile",
         name: "Tactile Force",
         sortable: true,
         headerCellClass: headerClass,
@@ -219,7 +275,7 @@ export default function CommonFeatures() {
         },
       },
       {
-        key: "bottomOut",
+        key: "bottom",
         name: "Bottom Out",
         sortable: true,
         headerCellClass: headerClass,
@@ -248,7 +304,7 @@ export default function CommonFeatures() {
         },
       },
       {
-        key: "pretravel",
+        key: "pre",
         name: "Pre-Travel",
         sortable: true,
         headerCellClass: headerClass,
@@ -277,7 +333,7 @@ export default function CommonFeatures() {
         },
       },
       {
-        key: "totalTravel",
+        key: "total",
         name: "Total Travel",
         sortable: true,
         headerCellClass: headerClass,
@@ -310,17 +366,31 @@ export default function CommonFeatures() {
     return data;
   }, [selectedSwitchTypes]);
 
+  const search = form.watch("search");
+
+  console.log(rows);
+
   const filteredRows = useMemo((): readonly Row[] => {
     let filterRows = [...rows];
 
-    if (selectedSwitchTypes.length > 0) {
-      filterRows = filterRows.filter((row) =>
-        selectedSwitchTypes.includes(row.spec.type)
-      );
+    const fuse = new Fuse(rows, {
+      keys: [
+        "friendlyName",
+        "spec.type",
+        "spec.force.actuation.value",
+        "spec.force.tactile.value",
+        "spec.force.bottom.value",
+        "spec.travel.pre.value",
+        "spec.travel.total.value",
+      ],
+    });
+
+    if (search) {
+      filterRows = fuse.search(search).map((result) => result.item);
     }
 
     return filterRows;
-  }, [rows, selectedSwitchTypes]);
+  }, [rows, selectedSwitchTypes, search]);
 
   const sortedRows = useMemo((): readonly Row[] => {
     if (sortColumns.length === 0) return filteredRows;
@@ -338,27 +408,47 @@ export default function CommonFeatures() {
   }, [filteredRows, sortColumns]);
 
   return (
-    <div className="absolute left-0 right-0 top-0 bottom-0 max-w-screen-2xl">
-      <div className="relative mt-24 px-2 sm:px-12">
-        <div className="h-[85vh] xl:h-[90vh] mx-auto">
-          <DataGrid
-            className="w-full h-full bg-transparent text-foreground"
-            rowClass={() => "bg-transparent outline-none hover:bg-muted"}
-            ref={gridRef}
-            rowKeyGetter={rowKeyGetter}
-            columns={columns}
-            rows={sortedRows}
-            defaultColumnOptions={{
-              sortable: true,
-              resizable: true,
-            }}
-            onRowsChange={setRows}
-            sortColumns={sortColumns}
-            onSortColumnsChange={setSortColumns}
-            enableVirtualization={!isExporting}
-          />
-        </div>
+    <>
+      <div>
+        <h1 className="text-4xl font-bold">Switches Table</h1>
+        <Form {...form}>
+          <form className="space-y-6 mt-2">
+            <FormField
+              control={form.control}
+              name="search"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Search for switches, sizes, materials..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
       </div>
-    </div>
+      <div className="relative overflow-auto mb-12 mt-4">
+        <DataGrid
+          className="w-full h-full bg-transparent text-foreground"
+          rowClass={() => "bg-transparent outline-none hover:bg-muted"}
+          ref={gridRef}
+          rowKeyGetter={rowKeyGetter}
+          columns={columns}
+          rows={sortedRows}
+          defaultColumnOptions={{
+            sortable: true,
+            resizable: true,
+          }}
+          onRowsChange={setRows}
+          sortColumns={sortColumns}
+          onSortColumnsChange={setSortColumns}
+          enableVirtualization={!isExporting}
+        />
+      </div>
+    </>
   );
 }

@@ -4,7 +4,6 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { SmtpMessage } from "../smtp-message";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";

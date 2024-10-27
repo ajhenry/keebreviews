@@ -45,24 +45,7 @@ export default function RootLayout({
           <NextUIProvider>
             <main className="min-h-screen flex flex-col items-center">
               <div className="flex-1 w-full flex flex-col items-center">
-                <SiteHeader />
-                <Container className="flex-1">
-                  <div className="w-full py-8 h-full">{children}</div>
-                </Container>
-
-                <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 bottom-0 h-8">
-                  <p>
-                    Made with ❤️ by{" "}
-                    <a
-                      href="https://ajhenry.com"
-                      target="_blank"
-                      className="font-bold hover:underline"
-                      rel="noreferrer"
-                    >
-                      ajhenry
-                    </a>
-                  </p>
-                </footer>
+                {children}
               </div>
             </main>
           </NextUIProvider>

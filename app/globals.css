@@ -77,6 +77,14 @@
 }
 
 .rdg {
+  /* These are needed because of a stupid bug in rdg where it doesn't respect the min-width of the column */
+  [role="gridcell"] {
+    min-width: min-content;
+  }
+  [role="columnheader"] {
+    min-width: min-content;
+  }
+
   &.fill-grid {
     block-size: 100%;
   }

@@ -124,7 +124,7 @@ export default function CommonFeatures() {
     },
   });
 
-  const headerClass = "bg-secondary p-0 outline-none";
+  const headerClass = "bg-secondary p-0 outline-none min-w-min-content";
 
   const columns = useMemo(() => {
     const data: Column<Row, SummaryRow>[] = [
@@ -162,6 +162,7 @@ export default function CommonFeatures() {
             </Badge>
           );
         },
+        cellClass: "min-w-min-content",
       },
       {
         key: "friendlyName",
@@ -190,6 +191,7 @@ export default function CommonFeatures() {
             </Link>
           );
         },
+        cellClass: "w-[350px] sm:w-auto truncate",
       },
       {
         key: "score",
@@ -320,6 +322,7 @@ export default function CommonFeatures() {
             </Button>
           );
         },
+
         renderCell: (props) => {
           return (
             <div className="text-center">
@@ -329,6 +332,7 @@ export default function CommonFeatures() {
             </div>
           );
         },
+        cellClass: "w-max-content",
       },
       {
         key: "total",
@@ -427,7 +431,7 @@ export default function CommonFeatures() {
           </form>
         </Form>
       </div>
-      <div className="relative overflow-auto mb-12 mt-4">
+      <div className="relative overflow-scroll mb-12 mt-4 w-full">
         <DataGrid
           className="w-full h-full bg-transparent text-foreground"
           rowClass={(_, i) => {
@@ -444,6 +448,7 @@ export default function CommonFeatures() {
           defaultColumnOptions={{
             sortable: true,
             resizable: true,
+            // width: "max-content",
           }}
           onRowsChange={setRows}
           sortColumns={sortColumns}

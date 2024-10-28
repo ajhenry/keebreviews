@@ -90,7 +90,9 @@ export default async function AuthButton() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>
-          <p className="text-lg">{`@${data?.handle}` ?? "My Account"}</p>
+          <p className="text-lg">
+            {data?.handle ? `@${data.handle}` : "My Account"}
+          </p>
           <p className="text-xs leading-none text-muted-foreground">
             {user.email}
           </p>

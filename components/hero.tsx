@@ -11,6 +11,9 @@ export default async function Header() {
       keyboardSwitch: true,
     },
     take: 10,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return (

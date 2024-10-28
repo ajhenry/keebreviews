@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { HeroSwitchSearch } from "./hero-switch-search";
-import NextLogo from "./next-logo";
-import SupabaseLogo from "./supabase-logo";
 import { Button } from "./ui/button";
 import { prismaClient } from "@/lib/database";
-import { SwitchReviewTable } from "./switch-review-table";
 import { HeroSwitchReviewTable } from "./hero-switch-review-table";
 
 export default async function Header() {

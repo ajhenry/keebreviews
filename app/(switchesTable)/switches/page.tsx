@@ -431,7 +431,7 @@ export default function CommonFeatures() {
           </form>
         </Form>
       </div>
-      <div className="relative overflow-scroll mb-12 mt-4 w-full">
+      <div className="relative overflow-scroll mt-4 w-full">
         <DataGrid
           className="w-full h-full bg-transparent text-foreground"
           rowClass={(_, i) => {
@@ -448,7 +448,6 @@ export default function CommonFeatures() {
           defaultColumnOptions={{
             sortable: true,
             resizable: true,
-            // width: "max-content",
           }}
           onRowsChange={setRows}
           sortColumns={sortColumns}

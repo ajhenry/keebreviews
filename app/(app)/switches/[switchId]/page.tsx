@@ -19,6 +19,8 @@ import { prismaClient } from "@/lib/database";
 import KeyboardSwitchInfoTable from "@/components/switch-info-table";
 import { TotalReviewSlider } from "@/components/review-slider";
 import { Ratings } from "@/utils/score";
+import { EmptyTotalReviewSlider } from "@/components/empty-review-slider";
+import pluralize from "pluralize";
 
 interface Spec {
   label: string;
@@ -86,13 +88,24 @@ export default async function KeyboardSwitchInfoPage({
         <div className="flex flex-col items-center">
           <div className="text-center mb-2">
             <h2 className="font-black text-6xl">
-              {Math.ceil(keyboardSwitchData?.averageScore ?? 0) ?? "—"}/100
+              {keyboardSwitchData?.averageScore
+                ? Math.ceil(keyboardSwitchData?.averageScore)
+                : "—"}
+              /100
             </h2>
-            <p className="text-sm text-muted-foreground">Average user score</p>
+            <p className="text-sm text-muted-foreground">
+              {keyboardSwitchData?.averageScore
+                ? `Average user score based on ${keyboardSwitchData?.reviewsCount} ${pluralize("review", keyboardSwitchData?.reviewsCount)}`
+                : "No user reviews yet"}
+            </p>
           </div>
-          <TotalReviewSlider
-            ratings={keyboardSwitchData?.averageRatings as unknown as Ratings}
-          />
+          {keyboardSwitchData?.averageRatings ? (
+            <TotalReviewSlider
+              ratings={keyboardSwitchData?.averageRatings as unknown as Ratings}
+            />
+          ) : (
+            <EmptyTotalReviewSlider />
+          )}
         </div>
         <div>
           <div className="flex flex-row justify-between items-center">

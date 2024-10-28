@@ -5,11 +5,13 @@ import SupabaseLogo from "./supabase-logo";
 import { Button } from "./ui/button";
 import { prismaClient } from "@/lib/database";
 import { SwitchReviewTable } from "./switch-review-table";
+import { HeroSwitchReviewTable } from "./hero-switch-review-table";
 
 export default async function Header() {
   const recentReviews = await prismaClient.review.findMany({
     include: {
       author: true,
+      keyboardSwitch: true,
     },
     take: 10,
   });
@@ -51,7 +53,7 @@ export default async function Header() {
         <p className="text-balance text-muted-foreground lg:text-base mt-2 text-center">
           Recent reviews from the community.
         </p>
-        <SwitchReviewTable reviews={recentReviews} />
+        <HeroSwitchReviewTable reviews={recentReviews} />
       </section>
     </div>
   );

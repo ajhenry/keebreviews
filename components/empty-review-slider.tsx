@@ -22,7 +22,6 @@ export const RatingSlider = ({
       <NextSlider
         aria-label={`Rating for ${label}`}
         classNames={{
-          base: "opacity-100",
           track: "bg-secondary h-2",
         }}
         size="sm"
@@ -54,8 +53,14 @@ export const RatingSlider = ({
   );
 };
 
-export const TotalReviewSlider = ({ ratings }: { ratings: Ratings }) => {
-  const { travel, weight, feel, sound, typing } = ratings as unknown as Ratings;
+export const EmptyTotalReviewSlider = () => {
+  const { travel, weight, feel, sound, typing } = {
+    travel: 0,
+    weight: 0,
+    feel: 0,
+    sound: 0,
+    typing: 0,
+  };
 
   return (
     <div className="space-y-2 max-w-[600px] w-full">

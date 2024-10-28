@@ -127,7 +127,7 @@ export default async function KeyboardSwitchInfoTable({
       <Table className="">
         <TableBody className="">
           {specs.map((spec) => (
-            <TableRow className="">
+            <TableRow className="" key={spec.label}>
               <TableCell className="font-medium">{spec.label}</TableCell>
               <TableCell className="text-right">
                 {spec.value || "N/A"}

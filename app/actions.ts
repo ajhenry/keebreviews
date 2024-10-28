@@ -66,8 +66,6 @@ export const signInWithProviderAction = async (formData: FormData) => {
     },
   });
 
-  console.log("error", error, "data", data);
-
   if (data.url) {
     redirect(data.url);
   }

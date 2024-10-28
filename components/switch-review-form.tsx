@@ -102,9 +102,6 @@ export function SwitchReviewForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
-    console.log("data");
-    console.log(data);
-
     if (data.switchId === "") {
       form.setError("switchId", {
         type: "manual",
@@ -113,8 +110,7 @@ export function SwitchReviewForm() {
       return;
     }
 
-    const [res, error] = await execute(data);
-    console.log(res, error);
+    const [res] = await execute(data);
 
     if (res?.success) {
       router.push(res.redirect);

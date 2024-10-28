@@ -51,8 +51,6 @@ export default async function KeyboardSwitchInfoPage({
     },
   });
 
-  console.log(keyboardSwitchData);
-
   if (!keyboardSwitch) {
     return <div>Switch not found</div>;
   }

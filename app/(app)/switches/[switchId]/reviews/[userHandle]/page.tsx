@@ -1,10 +1,8 @@
 import { prismaClient } from "@/lib/database";
 import { createClient } from "@/utils/supabase/server";
-import { Prisma } from "@prisma/client";
-import { ChevronRight, InfoIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { UserReviewTable } from "@/components/user-review-table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import PrettyAvatar from "prettyavatars";
 import { ReviewContent } from "@/components/review-content";
@@ -21,22 +19,8 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
-  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { UpdateReviewFlash } from "@/components/update-review-flash";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 export default async function UserSwitchReview({
   params,
@@ -68,7 +52,7 @@ export default async function UserSwitchReview({
       author: {
         handle: userHandle,
       },
-      switchId: switchId,
+      keyboardSwitchId: switchId,
     },
     include: {
       author: true,
@@ -88,8 +72,6 @@ export default async function UserSwitchReview({
   if (!review.published && review.authorId !== user?.id) {
     return redirect("/404");
   }
-
-  console.log("created at", review);
 
   const score = generateScore(review.ratings);
 

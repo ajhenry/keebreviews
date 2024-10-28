@@ -6,6 +6,10 @@ import { createClient } from "@/utils/supabase/server";
 import { prismaClient } from "@/lib/database";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getSwitchById } from "@/switchdb/src";
+import { Ratings, calculateRunningAverage, generateScore } from "@/utils/score";
+import { Json } from "@/database.types";
+import { InputJsonValue } from "@prisma/client/runtime/library";
 
 export const onboardingAction = createServerAction()
   .input(onboardingFormSchema)
@@ -55,10 +59,53 @@ export const createReviewAction = createServerAction()
       data: { user },
     } = await supabase.auth.getUser();
 
+    const switchData = getSwitchById(input.switchId);
+
+    if (!switchData) {
+      throw new Error("Switch not found");
+    }
+
+    const score = generateScore({
+      travel: input.travel,
+      weight: input.weight,
+      feel: input.feel,
+      sound: input.sound,
+      typing: input.typing,
+    });
+
+    // Find the switch by ID, and if it doesn't exist, create it
+    let keyboardSwitch = await prismaClient.keyboardSwitch.findFirst({
+      where: {
+        id: switchData.id,
+      },
+    });
+
+    // kb switch doesn't exist, create it
+    if (!keyboardSwitch) {
+      keyboardSwitch = await prismaClient.keyboardSwitch.create({
+        data: {
+          id: switchData.id,
+          name: switchData.friendlyName,
+          averageRatings: {
+            travel: input.travel,
+            weight: input.weight,
+            feel: input.feel,
+            sound: input.sound,
+            typing: input.typing,
+          },
+          reviewsCount: 1,
+          averageScore: score,
+        },
+      });
+    }
+
+    if (!keyboardSwitch) {
+      throw new Error("Failed to create switch");
+    }
+
     const res = await prismaClient.review.create({
       data: {
         authorId: user!.id,
-        switchId: input.switchId,
         ratings: {
           travel: input.travel,
           weight: input.weight,
@@ -66,8 +113,10 @@ export const createReviewAction = createServerAction()
           sound: input.sound,
           typing: input.typing,
         },
+        score: score,
         title: input.title,
         content: input.body,
+        keyboardSwitchId: switchData.id,
       },
       select: {
         author: {
@@ -75,6 +124,30 @@ export const createReviewAction = createServerAction()
             handle: true,
           },
         },
+      },
+    });
+
+    // Update the average ratings and score for the switch
+    const newAverages = calculateRunningAverage(
+      keyboardSwitch.averageRatings,
+      {
+        travel: input.travel,
+        weight: input.weight,
+        feel: input.feel,
+        sound: input.sound,
+        typing: input.typing,
+      },
+      keyboardSwitch.reviewsCount + 1
+    );
+
+    await prismaClient.keyboardSwitch.update({
+      where: {
+        id: switchData.id,
+      },
+      data: {
+        averageRatings: newAverages.newRatings as unknown as InputJsonValue,
+        averageScore: newAverages.newScore,
+        reviewsCount: keyboardSwitch.reviewsCount + 1,
       },
     });
 
@@ -147,3 +220,8 @@ export const updateReviewVisibilityAction = createServerAction()
 
     return { success: true };
   });
+
+// Fetches all the switch ratings and the count of ratings for all switches
+export const getAllSwitchRatings = createServerAction().handler(async () => {
+  const allRatings = await prismaClient.review.aggregate({});
+});

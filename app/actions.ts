@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { encodedRedirect } from "@/utils/utils";
+import { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerAction } from "zsa";
@@ -45,6 +46,31 @@ export const signInAction = async (formData: FormData) => {
     email,
     password,
   });
+
+  if (error) {
+    return encodedRedirect("error", "/sign-in", error.message);
+  }
+
+  return redirect("/users");
+};
+
+export const signInWithProviderAction = async (formData: FormData) => {
+  const provider = formData.get("provider") as Provider;
+  const origin = headers().get("origin");
+  const supabase = createClient();
+
+  const { error, data } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  });
+
+  console.log("error", error, "data", data);
+
+  if (data.url) {
+    redirect(data.url);
+  }
 
   if (error) {
     return encodedRedirect("error", "/sign-in", error.message);

@@ -96,9 +96,9 @@ export const UserReviewTable = ({ reviews }: UserReviewTableProps) => {
             </TableCell>
             <TableCell>
               <Link
-                href={`/switches/${review.switchId}/reviews/${review.author?.handle}`}
+                href={`/switches/${review.keyboardSwitchId}/reviews/${review.author?.handle}`}
               >
-                {getSwitchById(review.switchId)?.friendlyName}
+                {getSwitchById(review.keyboardSwitchId)?.friendlyName}
               </Link>
             </TableCell>
             <TableCell className="text-center">

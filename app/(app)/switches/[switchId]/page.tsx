@@ -135,7 +135,7 @@ export default async function NewReview({
 
   const reviews = await prismaClient.review.findMany({
     where: {
-      switchId: switchId,
+      keyboardSwitchId: switchId,
       published: true,
     },
     include: {

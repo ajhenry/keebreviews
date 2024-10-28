@@ -1,4 +1,4 @@
-import { signUpAction } from "@/app/actions";
+import { signInWithProviderAction, signUpAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
@@ -76,10 +76,18 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
             </span>
           </div>
         </div>
-        <Button variant="outline" type="button">
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-          GitHub
-        </Button>
+        <form className="w-full">
+          <input type="hidden" name="provider" value="github" />
+          <Button
+            variant="outline"
+            type="submit"
+            formAction={signInWithProviderAction}
+            className="w-full"
+          >
+            <Icons.gitHub className="mr-2 h-4 w-4" />
+            GitHub
+          </Button>
+        </form>
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         By clicking continue, you agree to our{" "}

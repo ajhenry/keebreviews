@@ -109,11 +109,11 @@ export const SwitchReviewTable = ({ reviews }: UserReviewTableProps) => {
           const labels = ratingToLabel(scores);
 
           return (
-            <TableRow>
+            <TableRow key={review.id}>
               <TableCell>
                 <Link
                   key={review.id}
-                  href={`/switches/${review.switchId}/reviews/${review.author?.handle}`}
+                  href={`/switches/${review.keyboardSwitchId}/reviews/${review.author?.handle}`}
                 >
                   <SquareArrowOutUpRightIcon size="16" strokeWidth={2} />
                 </Link>

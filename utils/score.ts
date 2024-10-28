@@ -72,11 +72,40 @@ export const normalizedScore = (score: number) => {
 };
 
 // generates the total score for a set of scores
-export const generateScore = (ratings: Record<string, number> | JsonValue) => {
+export const generateScore = (
+  ratings: Record<string, number> | JsonValue | Ratings
+) => {
   const scores = ratings as unknown as Ratings;
 
   const normalizedScores = Object.fromEntries(
     Object.entries(scores).map(([key, value]) => [key, normalizedScore(value)])
   );
   return Object.values(normalizedScores).reduce((acc, val) => acc + val, 0);
+};
+
+export const calculateRunningAverage = (
+  currentRatings: Record<string, number> | JsonValue,
+  newScore: Ratings,
+  totalEntries: number
+) => {
+  const newRatings: Ratings = {
+    ...(currentRatings as unknown as Ratings),
+  };
+
+  // new average = old average * (n-1)/n + new value /n
+
+  for (const [key, value] of Object.entries(newScore)) {
+    newRatings[key as keyof Ratings] =
+      newRatings[key as keyof Ratings] * ((totalEntries - 1) / totalEntries) +
+      value / totalEntries;
+  }
+
+  const averageScore =
+    (generateScore(currentRatings) * (totalEntries - 1)) / totalEntries +
+    generateScore(newRatings) / totalEntries;
+
+  return {
+    newScore: averageScore,
+    newRatings: newRatings,
+  };
 };

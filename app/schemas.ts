@@ -23,11 +23,11 @@ export const onboardingFormSchema = z.object({
 
 export const reviewFormSchema = z.object({
   switchId: z.string(),
-  travel: z.number().min(0).max(100),
-  weight: z.number().min(0).max(100),
-  feel: z.number().min(0).max(100),
-  sound: z.number().min(0).max(100),
-  typing: z.number().min(0).max(100),
+  travel: z.number().min(-20).max(20),
+  weight: z.number().min(-20).max(20),
+  feel: z.number().min(-20).max(20),
+  sound: z.number().min(-20).max(20),
+  typing: z.number().min(-20).max(20),
   title: z.string().max(128).optional(),
   body: z.string().max(5000).optional(),
 });

@@ -1,4 +1,4 @@
-import { signInAction } from "@/app/actions";
+import { signInAction, signInWithProviderAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { Icons } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
@@ -89,10 +89,18 @@ export default function Login({ searchParams }: { searchParams: Message }) {
             </span>
           </div>
         </div>
-        <Button variant="outline" type="button">
-          <Icons.gitHub className="mr-2 h-4 w-4" />
-          GitHub
-        </Button>
+        <form className="w-full">
+          <input type="hidden" name="provider" value="github" />
+          <Button
+            variant="outline"
+            type="submit"
+            formAction={signInWithProviderAction}
+            className="w-full"
+          >
+            <Icons.gitHub className="mr-2 h-4 w-4" />
+            GitHub
+          </Button>
+        </form>
       </div>
     </div>
   );

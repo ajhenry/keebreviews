@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { Slider as NextSlider } from "@nextui-org/slider";
+import { Alert } from "./ui/alert";
 
 const RatingSlider = ({
   form,
@@ -52,11 +53,12 @@ const RatingSlider = ({
             track: "bg-secondary h-3",
           }}
           className="outline-background"
+          aria-label={`${label} rating`}
           step={2}
           minValue={-20}
           maxValue={20}
           fillOffset={0}
-          defaultValue={[form.getValues(name) as number]}
+          defaultValue={form.getValues(name) as number}
           onChange={(val) => {
             form.setValue(name, val.valueOf() as number);
           }}
@@ -84,7 +86,7 @@ const RatingSlider = ({
 };
 
 export function SwitchReviewForm() {
-  const { execute, isPending } = useServerAction(createReviewAction);
+  const { execute, isPending, isError } = useServerAction(createReviewAction);
   const router = useRouter();
   const form = useForm<z.infer<typeof reviewFormSchema>>({
     mode: "onChange",
@@ -100,6 +102,7 @@ export function SwitchReviewForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof reviewFormSchema>) => {
+    console.log("data");
     console.log(data);
 
     if (data.switchId === "") {
@@ -110,7 +113,8 @@ export function SwitchReviewForm() {
       return;
     }
 
-    const [res] = await execute(data);
+    const [res, error] = await execute(data);
+    console.log(res, error);
 
     if (res?.success) {
       router.push(res.redirect);
@@ -129,6 +133,11 @@ export function SwitchReviewForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="flex-1 w-full flex flex-col space-y-8">
+          {isError && (
+            <Alert variant="destructive" className="w-full">
+              Something went wrong. Please try again.
+            </Alert>
+          )}
           <h1 className="text-2xl font-semibold text-center">New Review</h1>
           <div className="w-full space-y-1">
             <SwitchSearch
@@ -182,6 +191,7 @@ export function SwitchReviewForm() {
               <Editor onContentChange={(html) => form.setValue("body", html)} />
             </div>
             <LoadingButton
+              onClick={() => onSubmit(form.getValues())}
               type="submit"
               name="submit"
               className="w-full"

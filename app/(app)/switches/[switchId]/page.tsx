@@ -16,122 +16,22 @@ import Link from "next/link";
 import { formatForce, formatTravel } from "@/utils/force";
 import { SwitchReviewTable } from "@/components/switch-review-table";
 import { prismaClient } from "@/lib/database";
+import KeyboardSwitchInfoTable from "@/components/switch-info-table";
+import { TotalReviewSlider } from "@/components/review-slider";
+import { Ratings } from "@/utils/score";
 
 interface Spec {
   label: string;
   value: string | JSX.Element | number | undefined;
 }
 
-export default async function NewReview({
+export default async function KeyboardSwitchInfoPage({
   params,
 }: {
   params: { switchId: string };
 }) {
   const { switchId } = params;
-  const kbSwitch = getSwitchById(switchId);
-
-  const specs: Spec[] = [
-    {
-      label: "Model",
-      value: kbSwitch?.spec.model,
-    },
-    {
-      label: "Variation",
-      value: kbSwitch?.spec.variation,
-    },
-  ];
-
-  // if the switch is a linear, we need to show force and travel
-  if (kbSwitch?.spec.force.actuation) {
-    specs.push({
-      label: "Actuation Force",
-      value: formatForce(kbSwitch?.spec.force.actuation),
-    });
-  }
-  if (kbSwitch?.spec.force.bottom) {
-    specs.push({
-      label: "Bottom Out Force",
-      value: formatForce(kbSwitch?.spec.force.bottom),
-    });
-  }
-  if (kbSwitch?.spec.travel.pre) {
-    specs.push({
-      label: "Pre-Travel",
-      value: formatTravel(kbSwitch?.spec.travel.pre),
-    });
-  }
-  if (kbSwitch?.spec.travel.total) {
-    specs.push({
-      label: "Total Travel",
-      value: formatTravel(kbSwitch?.spec.travel.total),
-    });
-  }
-  if (kbSwitch?.spec.type === "tactile" || kbSwitch?.spec.type === "clicky") {
-    if (kbSwitch?.spec.force.tactile) {
-      specs.push({
-        label: "Tactile Force",
-        value: formatForce(kbSwitch?.spec.force.tactile),
-      });
-    }
-    if (kbSwitch?.spec.travel.pressure) {
-      specs.push({
-        label: "Tactile Pressure",
-        value: formatTravel(kbSwitch?.spec.travel.pressure),
-      });
-    }
-  }
-
-  specs.push(
-    ...([
-      {
-        label: "Profile",
-        value: kbSwitch?.spec.profile,
-      },
-      {
-        label: "Stem",
-        value: kbSwitch?.spec.stem.design,
-      },
-      {
-        label: "Mount",
-        value: kbSwitch?.spec.mount,
-      },
-      {
-        label: "Type",
-        value: kbSwitch?.spec.type,
-      },
-      {
-        label: "Lifetime",
-        value: kbSwitch?.spec.lifetime,
-      },
-      {
-        label: "Lighting",
-        value: kbSwitch?.spec.lighting,
-      },
-      {
-        label: "Lubrication",
-        value: kbSwitch?.spec.lubrication,
-      },
-      {
-        label: "Volume",
-        value: kbSwitch?.spec.volume,
-      },
-      {
-        label: "Spring Form",
-        value: kbSwitch?.spec.spring?.form ?? "",
-      },
-    ] as any)
-  );
-
-  if (kbSwitch?.spec.datasheet) {
-    specs.push({
-      label: "Datasheet",
-      value: (
-        <a href={kbSwitch?.spec.datasheet} target="_blank" rel="noreferrer">
-          Link
-        </a>
-      ),
-    });
-  }
+  const keyboardSwitch = getSwitchById(switchId);
 
   const reviews = await prismaClient.review.findMany({
     where: {
@@ -143,7 +43,19 @@ export default async function NewReview({
     },
   });
 
-  const switchName = `${kbSwitch?.brand.name} ${kbSwitch?.spec.model}`;
+  const keyboardSwitchData = await prismaClient.keyboardSwitch.findFirst({
+    where: {
+      id: switchId,
+    },
+  });
+
+  console.log(keyboardSwitchData);
+
+  if (!keyboardSwitch) {
+    return <div>Switch not found</div>;
+  }
+
+  const switchName = `${keyboardSwitch?.brand.name} ${keyboardSwitch?.spec.model}`;
 
   return (
     <div className="flex-1 w-full flex flex-col space-y-8">
@@ -154,8 +66,8 @@ export default async function NewReview({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href={`/switches/${kbSwitch?.brand.name}`}>
-              {kbSwitch?.brand.name}
+            <BreadcrumbLink href={`/switches/${keyboardSwitch?.brand.name}`}>
+              {keyboardSwitch?.brand.name}
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -164,27 +76,25 @@ export default async function NewReview({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="">
+      <div className="space-y-12">
         <div className="flex flex-row flex-wrap items-center">
-          <h1 className="text-4xl font-bold mr-2">{kbSwitch?.friendlyName} </h1>
-          <Badge className="capitalize">{kbSwitch?.spec.type}</Badge>
+          <h1 className="text-4xl font-bold mr-2">
+            {keyboardSwitch?.friendlyName}{" "}
+          </h1>
+          <Badge className="capitalize">{keyboardSwitch?.spec.type}</Badge>
         </div>
-        <h2 className="text-2xl font-semibold mt-4">Specs</h2>
+        <div className="flex flex-col items-center">
+          <div className="text-center mb-2">
+            <h2 className="font-black text-6xl">
+              {Math.ceil(keyboardSwitchData?.averageScore ?? 0) ?? "—"}/100
+            </h2>
+            <p className="text-sm text-muted-foreground">Average user score</p>
+          </div>
+          <TotalReviewSlider
+            ratings={keyboardSwitchData?.averageRatings as unknown as Ratings}
+          />
+        </div>
         <div>
-          <Table className="">
-            <TableBody className="">
-              {specs.map((spec) => (
-                <TableRow className="">
-                  <TableCell className="font-medium">{spec.label}</TableCell>
-                  <TableCell className="text-right">
-                    {spec.value || "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="mt-4">
           <div className="flex flex-row justify-between items-center">
             <h2 className="text-2xl font-semibold">Reviews</h2>
             <Link href={`/switches/reviews/new`}>
@@ -192,6 +102,10 @@ export default async function NewReview({
             </Link>
           </div>
           <SwitchReviewTable reviews={reviews} />
+        </div>
+        <div>
+          <h2 className="text-2xl font-semibold">Specs</h2>
+          <KeyboardSwitchInfoTable keyboardSwitch={keyboardSwitch} />
         </div>
       </div>
     </div>

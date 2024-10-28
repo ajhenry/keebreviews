@@ -22,6 +22,7 @@ export function MainNav() {
         {siteConfig.sidebar.map((group) =>
           group.items.map((item) => (
             <Link
+              key={item.title}
               href={item.href}
               className={cn(
                 "transition-colors hover:text-foreground/80",

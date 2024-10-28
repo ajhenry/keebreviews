@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { getSwitchById } from "@/switchdb/src";
 import { Badge } from "@/components/ui/badge";
-import { generateScore } from "@/utils/score";
+import { Ratings, generateScore } from "@/utils/score";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -176,7 +176,7 @@ export default async function UserSwitchReview({
       </div>
 
       <div className="mt-4 flex flex-col items-center">
-        <TotalReviewSlider review={review} />
+        <TotalReviewSlider ratings={review.ratings as unknown as Ratings} />
       </div>
 
       <div className="flex flex-col items-center mt-4 text-muted-foreground sm:px-12">

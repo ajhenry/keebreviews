@@ -83,7 +83,7 @@ export const HeroSwitchReviewTable = ({
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={4}>Total Reviews</TableCell>
+          <TableCell colSpan={3}>Total Reviews</TableCell>
           <TableCell className="text-right">{reviews.length}</TableCell>
         </TableRow>
       </TableFooter>

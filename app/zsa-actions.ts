@@ -93,7 +93,7 @@ export const createReviewAction = createServerAction()
             sound: input.sound,
             typing: input.typing,
           },
-          reviewsCount: 1,
+          reviewsCount: 0,
           averageScore: score,
         },
       });

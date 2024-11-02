@@ -17,7 +17,7 @@ export const ratingToLabel = (ratings: Ratings) => {
     const highLabel = ratingsMap[category as keyof Ratings].high as string;
 
     labelMap[category as keyof Ratings] =
-      score == 0 ? middleLabel : score > 0 ? lowLabel : highLabel;
+      score == 0 ? middleLabel : score > 0 ? highLabel : lowLabel;
   }
 
   return labelMap;

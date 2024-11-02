@@ -4,56 +4,25 @@ import {
   deleteReviewAction,
   updateReviewVisibilityAction,
 } from "@/app/zsa-actions";
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { prismaClient } from "@/lib/database";
-import { getSwitchById } from "@/switchdb/src";
 import {
   Ratings,
   generateScore,
   normalizedScore,
   ratingToLabel,
 } from "@/utils/score";
-import { createClient } from "@/utils/supabase/server";
-import { Prisma, Review } from "@prisma/client";
-import { DotsHorizontalIcon, Link1Icon } from "@radix-ui/react-icons";
-import {
-  InfoIcon,
-  Link2Icon,
-  LinkIcon,
-  SquareArrowOutUpRightIcon,
-} from "lucide-react";
+import { Prisma } from "@prisma/client";
+import { SquareArrowOutUpRightIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useServerAction } from "zsa-react";
 import { Avatar, AvatarFallback } from "./ui/avatar";

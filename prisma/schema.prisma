@@ -42,7 +42,8 @@ model User {
   reviews   Review[]
   handle    String    @unique
   admin     Boolean   @default(false)
-  banned    Boolean   @default(true)
+  deleted   Boolean   @default(false)
+  banned    Boolean   @default(false)
   bannedAt  DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt

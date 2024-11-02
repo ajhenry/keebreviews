@@ -108,7 +108,9 @@ export default async function AuthButton() {
           </Link>
         </DropdownMenuGroup>
         <ModeToggle />
-        <DropdownMenuItem>GitHub</DropdownMenuItem>
+        <DropdownMenuItem>
+          <a href="https://github.com/ajhenry/keebreviews">GitHub</a>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action={signOutAction}>
           <button type="submit" className="flex flex-row items-center w-full">

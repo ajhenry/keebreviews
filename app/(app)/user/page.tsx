@@ -5,16 +5,19 @@ import { InfoIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { UserReviewTable } from "@/components/user-review-table";
-
-const ReviewCard = ({
-  review,
-}: {
-  review: Prisma.ReviewGetPayload<{
-    include: { author: true };
-  }>;
-}) => {
-  return <div>{review.id}</div>;
-};
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { deleteAccountAction } from "@/app/actions";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -81,9 +84,39 @@ export default async function ProtectedPage() {
         <h2 className="font-bold text-2xl mb-4">Reviews</h2>
         <UserReviewTable reviews={reviews} />
       </div>
-      <div>
+      <div className="">
         <h2 className="font-bold text-2xl mb-4">Account Settings</h2>
-        <Link href="/user/reset-password">Change Password</Link>
+        <Link href="/user/reset-password">
+          <Button variant="link">Change Password</Button>
+        </Link>
+        {/* 
+        TODO: This doesn't work atm
+        <form>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Delete Account</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers. Your
+                  reviews will be removed and all data will be unrecoverable.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  formAction={deleteAccountAction}
+                  type="submit"
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </form> */}
       </div>
     </div>
   );

@@ -5,9 +5,9 @@ import { encodedRedirect } from "@/utils/utils";
 import { Provider } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerAction } from "zsa";
 
 export const signUpAction = async (formData: FormData) => {
+  console.log("sign up action");
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = createClient();
@@ -38,6 +38,7 @@ export const signUpAction = async (formData: FormData) => {
 };
 
 export const signInAction = async (formData: FormData) => {
+  console.log("email sign in action");
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = createClient();
@@ -55,6 +56,7 @@ export const signInAction = async (formData: FormData) => {
 };
 
 export const signInWithProviderAction = async (formData: FormData) => {
+  console.log("provider sign in action");
   const provider = formData.get("provider") as Provider;
   const origin = headers().get("origin");
   const supabase = createClient();
@@ -78,6 +80,7 @@ export const signInWithProviderAction = async (formData: FormData) => {
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
+  console.log("forgot password action");
   const email = formData.get("email")?.toString();
   const supabase = createClient();
   const origin = headers().get("origin");
@@ -112,6 +115,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
+  console.log("reset password action");
   const supabase = createClient();
 
   const password = formData.get("password") as string;
@@ -141,7 +145,47 @@ export const resetPasswordAction = async (formData: FormData) => {
 };
 
 export const signOutAction = async () => {
+  console.log("sign out action");
   const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
+};
+
+export const deleteAccountAction = async () => {
+  console.log("delete account action");
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
+
+  try {
+    await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          deleted: true,
+        },
+      }),
+      prisma.review.updateMany({
+        where: {
+          authorId: user.id,
+        },
+        data: {
+          published: false,
+        },
+      }),
+    ]);
+    // TODO: update all the reviews to recalculate the average rating
+  } catch (e) {
+    console.log("Failed to delete account", e);
+    return encodedRedirect("error", "/user", "Account deletion failed");
+  }
+  return redirect("/");
 };

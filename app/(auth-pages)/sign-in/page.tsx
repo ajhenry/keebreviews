@@ -2,18 +2,9 @@ import { signInAction, signInWithProviderAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { Icons } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserAuthForm } from "@/components/user-auth-form";
 import { cn } from "@/utils/cn";
 import { Metadata } from "next";
 import Link from "next/link";

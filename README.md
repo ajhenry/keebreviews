@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-   <img src="./resources/screenshot.png" width="250" alt="Demo image">
+   <img src="./resources/screenshot.png" width="450" alt="Demo image">
 </p>
 
 ## What is it

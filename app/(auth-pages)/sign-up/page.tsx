@@ -76,18 +76,32 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
             </span>
           </div>
         </div>
-        <form className="w-full">
-          <input type="hidden" name="provider" value="github" />
-          <Button
-            variant="outline"
-            type="submit"
-            formAction={signInWithProviderAction}
-            className="w-full"
-          >
-            <Icons.gitHub className="mr-2 h-4 w-4" />
-            GitHub
-          </Button>
-        </form>
+        <div className="space-y-4">
+          <form className="w-full">
+            <input type="hidden" name="provider" value="google" />
+            <Button
+              variant="outline"
+              type="submit"
+              formAction={signInWithProviderAction}
+              className="w-full"
+            >
+              <Icons.google className="mr-2 h-4 w-4" />
+              Google
+            </Button>
+          </form>
+          <form className="w-full">
+            <input type="hidden" name="provider" value="github" />
+            <Button
+              variant="outline"
+              type="submit"
+              formAction={signInWithProviderAction}
+              className="w-full"
+            >
+              <Icons.gitHub className="mr-2 h-4 w-4" />
+              GitHub
+            </Button>
+          </form>
+        </div>
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         By clicking continue, you agree to our{" "}

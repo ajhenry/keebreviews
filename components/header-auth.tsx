@@ -100,7 +100,7 @@ export default async function AuthButton() {
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/users">
+          <Link href="/user">
             <DropdownMenuItem>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>

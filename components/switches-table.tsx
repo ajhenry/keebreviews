@@ -454,7 +454,7 @@ export const SwitchesTable = ({ switchRatings }: SwitchesTableProps) => {
           </form>
         </Form>
       </div>
-      <div className="relative overflow-scroll mt-4 w-full">
+      <div className="relative overflow-auto mt-4 w-full">
         <DataGrid
           className="w-full h-full bg-transparent text-foreground"
           rowClass={(_, i) => {

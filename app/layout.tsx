@@ -1,21 +1,8 @@
-import DeployButton from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import HeaderAuth from "@/components/header-auth";
-import { SwitchSearchCommand } from "@/components/switch-search-modal";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Container } from "@/components/ui/container";
-import {
-  Dialog,
-  DialogContentSlim,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
 import "./globals.css";
-import { SiteHeader } from "@/components/header";
 import { NextUIProvider } from "@nextui-org/react";
+import { Analytics } from "@vercel/analytics/react";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`

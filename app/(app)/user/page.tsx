@@ -37,9 +37,7 @@ export default async function ProtectedPage() {
     },
   });
 
-  if (!data) {
-    return redirect("/onboarding");
-  }
+  // Non-onboarded users can view this page because they can delete their account from here
 
   const userData = await prismaClient.user.findFirst({
     where: {
@@ -64,10 +62,25 @@ export default async function ProtectedPage() {
           <div>
             This is your private dashboard. Only you can see this page.
             <p>
-              If you want to see your public profile{" "}
-              <Link href={`/users/${userData?.handle}`} className="underline">
-                click here.
-              </Link>
+              {!userData ? (
+                <>
+                  You will need to complete your{" "}
+                  <Link href={`onboarding`} className="underline">
+                    onboarding here
+                  </Link>{" "}
+                  before you have a public profile.
+                </>
+              ) : (
+                <>
+                  If you want to see your public profile{" "}
+                  <Link
+                    href={`/users/${userData?.handle}`}
+                    className="underline"
+                  >
+                    click here.
+                  </Link>
+                </>
+              )}
             </p>
           </div>
         </div>

@@ -207,9 +207,9 @@ export default async function UserSwitchReview({
               </div>
             </Button>
           </Link>
-          on {dayjs(review.createdAt).format("MMM D, YYYY H:mm:ss A")}
+          on {dayjs(review.createdAt).format("MMM D, YYYY h:mma")}
           {!dayjs(review.createdAt).isSame(review.updatedAt) &&
-            ` (edited ${dayjs(review.updatedAt).format("MMM D, YYYY H:mm:ss A")})`}
+            ` (edited ${dayjs(review.updatedAt).format("MMM D, YYYY h:mma")})`}
         </p>
       </div>
       {review.title && (

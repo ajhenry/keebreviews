@@ -1,7 +1,7 @@
 "use client";
 
 import { reviewFormSchema } from "@/app/schemas";
-import { createReviewAction } from "@/app/zsa-actions";
+import { createReviewAction, updateReviewAction } from "@/app/zsa-actions";
 import { Editor } from "@/components/editor";
 import { SwitchSearch } from "@/components/switch-search";
 import {
@@ -18,7 +18,7 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
 import { generateScore, normalizedScore, ratingsMap } from "@/utils/score";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -91,18 +91,25 @@ interface SwitchReviewFormProps {
 }
 
 export function SwitchReviewForm({ existingReview }: SwitchReviewFormProps) {
-  const { execute, isPending, isError } = useServerAction(createReviewAction);
+  const searchParams = useSearchParams();
+
+  const switchId = searchParams.get("switchId");
+  const { execute, isPending, isError } = useServerAction(
+    existingReview ? updateReviewAction : createReviewAction
+  );
   const router = useRouter();
   const form = useForm<z.infer<typeof reviewFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
-      switchId: existingReview?.keyboardSwitchId ?? "",
-      travel: 0,
-      weight: 0,
-      feel: 0,
-      sound: 0,
-      typing: 0,
+      switchId: switchId ?? existingReview?.keyboardSwitchId ?? "",
+      travel: existingReview?.ratings?.travel ?? 0,
+      weight: existingReview?.ratings?.weight ?? 0,
+      feel: existingReview?.ratings?.feel ?? 0,
+      sound: existingReview?.ratings?.sound ?? 0,
+      typing: existingReview?.ratings?.typing ?? 0,
+      title: existingReview?.title ?? "",
+      body: existingReview?.content ?? "",
     },
   });
 
@@ -142,7 +149,8 @@ export function SwitchReviewForm({ existingReview }: SwitchReviewFormProps) {
           <h1 className="text-2xl font-semibold text-center">New Review</h1>
           <div className="w-full space-y-1">
             <SwitchSearch
-              defaultValue={existingReview?.keyboardSwitchId}
+              disabled={!!existingReview}
+              defaultValue={switchId ?? existingReview?.keyboardSwitchId}
               onSelectSwitch={(id) => {
                 form.clearErrors("switchId");
                 form.setValue("switchId", id);
@@ -190,7 +198,10 @@ export function SwitchReviewForm({ existingReview }: SwitchReviewFormProps) {
               />
             </div>
             <div className="mt-8">
-              <Editor onContentChange={(html) => form.setValue("body", html)} />
+              <Editor
+                onContentChange={(html) => form.setValue("body", html)}
+                initialContent={form.getValues("body")}
+              />
             </div>
             <LoadingButton
               onClick={() => onSubmit(form.getValues())}

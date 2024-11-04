@@ -10,10 +10,12 @@ import MenuBar from "./menu-bar";
 
 interface EditorProps {
   onContentChange: (content: string) => void;
+  initialContent?: string;
 }
 
-export function Editor({ onContentChange }: EditorProps) {
+export function Editor({ onContentChange, initialContent }: EditorProps) {
   const editor = useEditor({
+    content: initialContent,
     onUpdate: ({ editor }) => {
       onContentChange(editor.getHTML());
     },

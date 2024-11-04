@@ -9,23 +9,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Force, ForceUnit, Travel } from "@/switchdb/src/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { formatForce, formatTravel } from "@/utils/force";
 import { SwitchReviewTable } from "@/components/switch-review-table";
 import { prismaClient } from "@/lib/database";
 import KeyboardSwitchInfoTable from "@/components/switch-info-table";
 import { TotalReviewSlider } from "@/components/review-slider";
-import { Ratings } from "@/utils/score";
 import { EmptyTotalReviewSlider } from "@/components/empty-review-slider";
 import pluralize from "pluralize";
+import { notFound } from "next/navigation";
 
-interface Spec {
-  label: string;
-  value: string | JSX.Element | number | undefined;
-}
+export const dynamic = "auto";
 
 export default async function KeyboardSwitchInfoPage({
   params,
@@ -34,6 +28,10 @@ export default async function KeyboardSwitchInfoPage({
 }) {
   const { switchId } = params;
   const keyboardSwitch = getSwitchById(switchId);
+
+  if (!keyboardSwitch) {
+    return notFound();
+  }
 
   const reviews = await prismaClient.review.findMany({
     where: {
@@ -51,10 +49,6 @@ export default async function KeyboardSwitchInfoPage({
     },
   });
 
-  if (!keyboardSwitch) {
-    return <div>Switch not found</div>;
-  }
-
   const switchName = `${keyboardSwitch?.brand.name} ${keyboardSwitch?.spec.model}`;
 
   return (
@@ -66,7 +60,9 @@ export default async function KeyboardSwitchInfoPage({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href={`/switches/${keyboardSwitch?.brand.name}`}>
+            <BreadcrumbLink
+              href={`/switches?brand=${keyboardSwitch?.brand.name}`}
+            >
               {keyboardSwitch?.brand.name}
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -86,29 +82,28 @@ export default async function KeyboardSwitchInfoPage({
         <div className="flex flex-col items-center">
           <div className="text-center mb-2">
             <h2 className="font-black text-6xl">
-              {keyboardSwitchData?.averageScore
+              {keyboardSwitchData?.averageScore &&
+              (keyboardSwitchData?.reviewsCount ?? 0) > 0
                 ? Math.ceil(keyboardSwitchData?.averageScore)
                 : "—"}
               /100
             </h2>
             <p className="text-sm text-muted-foreground">
-              {keyboardSwitchData?.averageScore
+              {(keyboardSwitchData?.reviewsCount ?? 0 > 0)
                 ? `Average user score based on ${keyboardSwitchData?.reviewsCount} ${pluralize("review", keyboardSwitchData?.reviewsCount)}`
                 : "No user reviews yet"}
             </p>
           </div>
           {keyboardSwitchData?.averageRatings ? (
-            <TotalReviewSlider
-              ratings={keyboardSwitchData?.averageRatings as unknown as Ratings}
-            />
+            <TotalReviewSlider ratings={keyboardSwitchData?.averageRatings} />
           ) : (
             <EmptyTotalReviewSlider />
           )}
         </div>
-        <div>
+        <div id="reviews">
           <div className="flex flex-row justify-between items-center">
             <h2 className="text-2xl font-semibold">Reviews</h2>
-            <Link href={`/switches/reviews/new`}>
+            <Link href={`/switches/reviews/new?switchId=${switchId}`}>
               <Button variant="outline">Submit Review</Button>
             </Link>
           </div>

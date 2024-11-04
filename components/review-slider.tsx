@@ -55,7 +55,7 @@ export const RatingSlider = ({
 };
 
 export const TotalReviewSlider = ({ ratings }: { ratings: Ratings }) => {
-  const { travel, weight, feel, sound, typing } = ratings as unknown as Ratings;
+  const { travel, weight, feel, sound, typing } = ratings;
 
   return (
     <div className="space-y-2 max-w-[600px] w-full">

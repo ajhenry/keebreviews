@@ -97,7 +97,7 @@ export default async function UserSwitchReview({
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={`/switches/${switchDef?.friendlyName}`}>
+              <BreadcrumbLink href={`/switches/${switchDef?.id}#reviews`}>
                 Reviews
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -176,7 +176,7 @@ export default async function UserSwitchReview({
       </div>
 
       <div className="mt-4 flex flex-col items-center">
-        <TotalReviewSlider ratings={review.ratings as unknown as Ratings} />
+        <TotalReviewSlider ratings={review.ratings} />
       </div>
 
       <div className="flex flex-col items-center mt-4 text-muted-foreground sm:px-12">

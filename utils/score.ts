@@ -72,24 +72,21 @@ export const normalizedScore = (score: number) => {
 };
 
 // generates the total score for a set of scores
-export const generateScore = (
-  ratings: Record<string, number> | JsonValue | Ratings
-) => {
-  const scores = ratings as unknown as Ratings;
-
+export const generateScore = (ratings: Ratings) => {
   const normalizedScores = Object.fromEntries(
-    Object.entries(scores).map(([key, value]) => [key, normalizedScore(value)])
+    Object.entries(ratings).map(([key, value]) => [key, normalizedScore(value)])
   );
   return Object.values(normalizedScores).reduce((acc, val) => acc + val, 0);
 };
 
-export const calculateRunningAverage = (
-  currentRatings: Record<string, number> | JsonValue,
+// This adds to the running average
+export const addToRunningAverage = (
+  currentRatings: Ratings,
   newScore: Ratings,
   totalEntries: number
 ) => {
   const newRatings: Ratings = {
-    ...(currentRatings as unknown as Ratings),
+    ...currentRatings,
   };
 
   // new average = old average * (n-1)/n + new value /n
@@ -107,5 +104,69 @@ export const calculateRunningAverage = (
   return {
     newScore: averageScore,
     newRatings: newRatings,
+  };
+};
+
+// This removes from the running average
+// like if a review is deleted
+export const removeFromRunningAverage = (
+  currentRatings: Ratings,
+  removedScore: Ratings,
+  totalEntries: number
+) => {
+  if (totalEntries <= 1) {
+    return {
+      newScore: 0,
+      newRatings: {
+        travel: 0,
+        weight: 0,
+        feel: 0,
+        sound: 0,
+        typing: 0,
+      },
+    };
+  }
+
+  const newRatings: Ratings = {
+    ...currentRatings,
+  };
+
+  for (const [key, value] of Object.entries(removedScore)) {
+    newRatings[key as keyof Ratings] =
+      (newRatings[key as keyof Ratings] * totalEntries - value) /
+      (totalEntries - 1);
+  }
+
+  const averageScore =
+    (generateScore(currentRatings) * totalEntries -
+      generateScore(removedScore)) /
+    (totalEntries - 1);
+
+  return {
+    newScore: averageScore,
+    newRatings: newRatings,
+  };
+};
+
+// This updates the running average when a review is updated
+export const updateRunningAverage = (
+  currentRatings: Ratings,
+  oldScore: Ratings,
+  newScore: Ratings,
+  totalEntries: number
+) => {
+  // Step 1: Remove the old score
+  const {
+    newScore: intermediateAverageScore,
+    newRatings: intermediateRatings,
+  } = removeFromRunningAverage(currentRatings, oldScore, totalEntries);
+
+  // Step 2: Add the new score
+  const { newScore: updatedAverageScore, newRatings: updatedRatings } =
+    addToRunningAverage(intermediateRatings, newScore, totalEntries);
+
+  return {
+    newScore: updatedAverageScore,
+    newRatings: updatedRatings,
   };
 };

@@ -38,12 +38,14 @@ interface SwitchSearchProps {
   onSelectSwitch?: (id: string) => void;
   placeholder?: string;
   defaultValue?: string;
+  disabled?: boolean;
 }
 
 export function SwitchSearch({
   onSelectSwitch,
   placeholder,
   defaultValue,
+  disabled,
 }: SwitchSearchProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultValue ?? "");
@@ -54,13 +56,14 @@ export function SwitchSearch({
   }, [value]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={disabled ? false : open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          disabled={disabled}
         >
           {value
             ? selectedSwitch

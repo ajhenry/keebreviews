@@ -25,22 +25,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import Fuse from "fuse.js";
 import { KeyboardSwitch } from "@prisma/client";
 import pluralize from "pluralize";
 const DataGrid = dynamic(() => import("react-data-grid"), { ssr: false });
-
-interface SummaryRow {
-  id: string;
-  totalCount: number;
-  yesCount: number;
-}
 
 type Row = MechanicalKeySwitch;
 
@@ -146,7 +138,7 @@ export const SwitchesTable = ({ switchRatings }: SwitchesTableProps) => {
   const headerClass = "bg-secondary p-0 outline-none min-w-min-content";
 
   const columns = useMemo(() => {
-    const data: Column<Row, SummaryRow>[] = [
+    const data: Column<Row>[] = [
       {
         key: "type",
         name: "Type",
@@ -234,14 +226,15 @@ export const SwitchesTable = ({ switchRatings }: SwitchesTableProps) => {
         renderCell: (props) => {
           const score = switchRatings[props.row.id]?.averageScore;
           const reviewCount = switchRatings[props.row.id]?.reviewsCount;
+
           return (
             <div className="text-center">
-              {score ? Math.ceil(score) : "—"}
-              {reviewCount && (
+              {score && reviewCount > 0 ? Math.ceil(score) : "—"}
+              {score && reviewCount > 0 ? (
                 <span className="text-muted-foreground text-xs ml-1">
                   ({reviewCount} {pluralize("review", reviewCount)})
                 </span>
-              )}
+              ) : null}
             </div>
           );
         },
@@ -472,14 +465,17 @@ export const SwitchesTable = ({ switchRatings }: SwitchesTableProps) => {
             return baseStyle;
           }}
           ref={gridRef}
-          rowKeyGetter={rowKeyGetter}
-          columns={columns}
+          // No idea why this broke with the upgrade to ts 5.6.3
+          rowKeyGetter={rowKeyGetter as any}
+          // No idea why this broke with the upgrade to ts 5.6.3
+          columns={columns as any}
           rows={sortedRows}
           defaultColumnOptions={{
             sortable: true,
             resizable: true,
           }}
-          onRowsChange={setRows}
+          // No idea why this broke with the upgrade to ts 5.6.3
+          onRowsChange={setRows as any}
           sortColumns={sortColumns}
           onSortColumnsChange={setSortColumns}
           enableVirtualization={!isExporting}

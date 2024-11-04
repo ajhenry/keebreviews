@@ -74,7 +74,7 @@ export const SwitchReviewTable = ({ reviews }: UserReviewTableProps) => {
           </TableRow>
         )}
         {reviews.map((review) => {
-          const scores = review.ratings as unknown as Ratings;
+          const scores = review.ratings;
           const labels = ratingToLabel(scores);
 
           return (

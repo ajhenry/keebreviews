@@ -8,8 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+/// Always after the prisma-client-js generator
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 model Review {
   id               String         @id @default(cuid())
+  /// [PrismaRatings]
   ratings          Json
   score            Float          @default(0)
   title            String?
@@ -30,6 +36,7 @@ model KeyboardSwitch {
   reviews        Review[]
   reviewsCount   Int
   averageScore   Float
+  /// [PrismaRatings]
   averageRatings Json
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now()) @updatedAt

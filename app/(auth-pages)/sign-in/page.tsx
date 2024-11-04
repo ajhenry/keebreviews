@@ -6,15 +6,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
+import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Authentication",
   description: "Authentication forms built using the components.",
 };
 
-export default function Login({ searchParams }: { searchParams: Message }) {
+export default async function Login({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/");
+  }
+
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
       <div className="flex flex-col space-y-2 text-center">

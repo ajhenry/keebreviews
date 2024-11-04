@@ -10,7 +10,10 @@ export async function GET(request: Request) {
 
   const user = await prismaClient.user.findFirst({
     where: {
-      handle: handle,
+      handle: {
+        equals: handle,
+        mode: "insensitive",
+      },
     },
   });
 

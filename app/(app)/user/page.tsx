@@ -86,7 +86,7 @@ export default async function ProtectedPage() {
       </div>
       <div className="">
         <h2 className="font-bold text-2xl mb-4">Account Settings</h2>
-        <Link href="/user/reset-password">
+        <Link href="/user/change-password">
           <Button variant="link">Change Password</Button>
         </Link>
         {/* 

@@ -25,6 +25,20 @@ export const onboardingAction = createServerAction()
       return { error: "User not found" };
     }
 
+    // Check if the handle already exists
+    const userExists = await prismaClient.user.findFirst({
+      where: {
+        handle: {
+          equals: username,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (userExists) {
+      return { error: "Handle already exists" };
+    }
+
     const result = await prismaClient.user.upsert({
       update: {
         handle: username,
@@ -42,7 +56,7 @@ export const onboardingAction = createServerAction()
       },
     });
 
-    return { success: true };
+    return { success: true, data: result };
   });
 
 export const signOutAction = createServerAction().handler(async () => {

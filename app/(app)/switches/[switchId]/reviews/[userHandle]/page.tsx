@@ -2,7 +2,7 @@ import { prismaClient } from "@/lib/database";
 import { createClient } from "@/utils/supabase/server";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import PrettyAvatar from "prettyavatars";
 import { ReviewContent } from "@/components/review-content";
@@ -44,7 +44,7 @@ export default async function UserSwitchReview({
 
   // TODO: need to do something about this
   if (!authorData) {
-    return redirect("/404");
+    return notFound();
   }
 
   const review = await prismaClient.review.findFirst({
@@ -60,17 +60,17 @@ export default async function UserSwitchReview({
   });
 
   if (!review) {
-    return redirect("/404");
+    return notFound();
   }
 
   const switchDef = getSwitchById(switchId);
 
   if (!switchDef) {
-    return redirect("/404");
+    return notFound();
   }
 
   if (!review.published && review.authorId !== user?.id) {
-    return redirect("/404");
+    return notFound();
   }
 
   const score = generateScore(review.ratings);

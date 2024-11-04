@@ -123,6 +123,10 @@ export default function UserOnboarding() {
               <FormControl>
                 <Input placeholder="Username" {...field} />
               </FormControl>
+              <FormDescription>
+                Usernames are case-insensitive and can only contain letters,
+                numbers, hyphens, and underscores.
+              </FormDescription>
               {username && isAvailable && !form.formState.errors.username && (
                 <FormDescription>
                   <span>Username is available</span>

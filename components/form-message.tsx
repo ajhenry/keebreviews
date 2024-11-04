@@ -1,3 +1,6 @@
+import { RocketIcon } from "@radix-ui/react-icons";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+
 export type Message =
   | { success: string }
   | { error: string }
@@ -7,17 +10,19 @@ export function FormMessage({ message }: { message: Message }) {
   return (
     <div className="flex flex-col gap-2 w-full max-w-md text-sm">
       {"success" in message && (
-        <div className="text-foreground border-l-2 border-foreground px-4">
-          {message.success}
-        </div>
+        <Alert variant="default">
+          <AlertDescription>{message.success}</AlertDescription>
+        </Alert>
       )}
       {"error" in message && (
-        <div className="border-l-2 border-destructive px-4 first-letter:capitalize p-2">
-          {message.error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{message.error}</AlertDescription>
+        </Alert>
       )}
       {"message" in message && (
-        <div className="text-foreground border-l-2 px-4">{message.message}</div>
+        <Alert variant="default">
+          <AlertDescription>{message.message}</AlertDescription>
+        </Alert>
       )}
     </div>
   );

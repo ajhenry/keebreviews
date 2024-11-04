@@ -25,6 +25,7 @@ import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { Slider as NextSlider } from "@nextui-org/slider";
 import { Alert } from "./ui/alert";
+import { Review } from "@prisma/client";
 
 const RatingSlider = ({
   form,
@@ -85,14 +86,18 @@ const RatingSlider = ({
   );
 };
 
-export function SwitchReviewForm() {
+interface SwitchReviewFormProps {
+  existingReview?: Review;
+}
+
+export function SwitchReviewForm({ existingReview }: SwitchReviewFormProps) {
   const { execute, isPending, isError } = useServerAction(createReviewAction);
   const router = useRouter();
   const form = useForm<z.infer<typeof reviewFormSchema>>({
     mode: "onChange",
     resolver: zodResolver(reviewFormSchema),
     defaultValues: {
-      switchId: "",
+      switchId: existingReview?.keyboardSwitchId ?? "",
       travel: 0,
       weight: 0,
       feel: 0,
@@ -137,6 +142,7 @@ export function SwitchReviewForm() {
           <h1 className="text-2xl font-semibold text-center">New Review</h1>
           <div className="w-full space-y-1">
             <SwitchSearch
+              defaultValue={existingReview?.keyboardSwitchId}
               onSelectSwitch={(id) => {
                 form.clearErrors("switchId");
                 form.setValue("switchId", id);

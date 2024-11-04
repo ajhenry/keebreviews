@@ -1,12 +1,8 @@
 import { prismaClient } from "@/lib/database";
-import { createClient } from "@/utils/supabase/server";
-import { Prisma } from "@prisma/client";
-import { InfoIcon } from "lucide-react";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { UserReviewTable } from "@/components/user-review-table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import PrettyAvatar from "prettyavatars";
+import { notFound } from "next/navigation";
 
 export default async function ProtectedPage({
   params,
@@ -24,7 +20,7 @@ export default async function ProtectedPage({
 
   // need to do something about this
   if (!userData) {
-    return redirect("/404");
+    return notFound();
   }
 
   const reviews = await prismaClient.review.findMany({

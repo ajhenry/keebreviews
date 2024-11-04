@@ -37,14 +37,16 @@ const keyboardSwitches = getAllSwitches().map((item) => {
 interface SwitchSearchProps {
   onSelectSwitch?: (id: string) => void;
   placeholder?: string;
+  defaultValue?: string;
 }
 
 export function SwitchSearch({
   onSelectSwitch,
   placeholder,
+  defaultValue,
 }: SwitchSearchProps) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(defaultValue ?? "");
   const selectedSwitch = getSwitchById(value);
 
   React.useEffect(() => {

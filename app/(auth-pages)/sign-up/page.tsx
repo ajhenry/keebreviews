@@ -7,8 +7,24 @@ import Link from "next/link";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function Signup({ searchParams }: { searchParams: Message }) {
+export default async function Signup({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/");
+  }
+
   if ("message" in searchParams) {
     return (
       <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
